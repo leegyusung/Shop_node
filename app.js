@@ -5,13 +5,19 @@ const nunjucks = require('nunjucks');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const path = require('path');
-
 const { sequelize } = require('./models');
+const passport = require('passport');
+const passportConfig = require('./passport');
 
-const signRouter=require('./router/signin');
+
+const indexRouter=require('./router');
+const signRouter = require('./router/signin');
+const loginRouter =require('./router/login');
+
 
 dotenv.config();
 const app = express();
+passportConfig();
 app.set('port', process.env.PORT || 8001);
 app.set('view engine', 'html');
 nunjucks.configure('views', {
@@ -32,21 +38,21 @@ app.use(session({
         secure: false,
     },
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 //Mysql 초기설정
-sequelize.sync({force:false})//force가 true 면 서버가 돌아갈때마다 테이블생성
-.then(()=>{
-    console.log('데이터베이스 연결 성공');
-})
-.catch((err)=>{
-    console.error(err);
-});
+sequelize.sync({ force: false })//force가 true 면 서버가 돌아갈때마다 테이블생성
+    .then(() => {
+        console.log('데이터베이스 연결 성공');
+    })
+    .catch((err) => {
+        console.error(err);
+    });
 //Mysql 초기설정
 
-app.use('/signin',signRouter);
-
-app.get('/', (req, res, next) => {
-    res.render('main', { title: 'Main' });
-})
+app.use('/',indexRouter);
+app.use('/signin', signRouter);
+app.use('/login',loginRouter);
 
 app.listen(app.get('port'), () => {
     console.log(app.get('port'), '포트에서 사용중입니다');

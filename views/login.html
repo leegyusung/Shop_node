@@ -9,29 +9,7 @@
     <link rel="stylesheet" href="css/signin.css">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            mainBack();
-            signIn();
-        })
-
-        function mainBack() {
-            $('#back-main').on('click', () => {
-                location.href = '/';
-            })
-        }
-        function signIn() {
-            $('#sign-in').on('click', (e) => {
-                const email = $('#email').val();
-                const password = $('#password').val();
-                const name = $('#name').val();
-
-                e.preventDefault();
-            })
-
-        }
-
-    </script>
+   
 </head>
 
 <body>
@@ -48,11 +26,39 @@
                     value="">
                 <label>Passward</label>
             </div>
-            
-            <input type="button" id="back-main" value="Back ">
-            <input type="submit" id="sign-in" value="Log In">
+
+            <input type="button" id="back-main" value="Back " onclick="mainBack()">
+            <input type="button" id="log-in" value="Log In" onclick="LogIn()">
         </form>
     </div>
 </body>
+<script>
+    function mainBack() {
+        $('#back-main').on('click', () => {
+            location.href = '/';
+        })
+    };
+    function LogIn() {
+        $('#log-in').on('click', () => {
+            const email = $('#email').val();
+            const password = $('#password').val();
+            $.ajax({
+                url:'/login',
+                type:'post',
+                data:{
+                    email:email,
+                    password:password,
+                },
+                success:function(data){
+                    getMain();
+                    //location.href='/';
+                }
+            })
+        })
+    };
+    function getMain(){
+        axios.get('/');
+    }
+</script>
 
 </html>

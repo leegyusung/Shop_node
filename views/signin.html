@@ -49,7 +49,7 @@
             const password = $('#password').val();
             const name = $('#name').val();
           const result = await axios.post('/signin', { email, password, name });
-          alert(JSON.stringify(result));
+          location.href='/';
             // .then((data)=>{
             //     alert(JSON.stringify(data));
             // })

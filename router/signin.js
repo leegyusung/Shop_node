@@ -13,7 +13,7 @@ router.post('/', async (req, res, next) => {
             password: hash,
             name: req.body.name,
         })
-       return res.status(200).json({ result: 'success' });
+       return res.redirect('/');
     } catch (error) {
         console.error(error);
         next(error);

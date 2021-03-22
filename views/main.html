@@ -2,7 +2,10 @@
 
 {% block content %}
 <script>
- 
+ function logOut(){
+  axios.get('/login/logout');
+  location.reload();
+}
 
 </script>
 
@@ -17,13 +20,23 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
+
         <ul class="navbar-nav ml-auto">
+          {% if user and user.id %}
+          <li class="nav-item">
+            <a class="nav-link">{{user.name}} 님</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="logOut()">Logout</a>
+          </li>
+          {% else %}
           <li class="nav-item">
             <a class="nav-link" href="login.html">Login</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="signin.html">Sign in</a>
           </li>
+          {% endif %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
