@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="css/signin.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="box">
+        <h2>Sign in</h2>
+        <p></p>
+        <form>
+            <div class="inputBox">
+                <input type="email" id="email" required onkeyup="this.setAttribute('value', this.value);" value="">
+                <label>Email</label>
+            </div>
+            <div class="inputBox">
+                <input type="password" id="password" required onkeyup="this.setAttribute('value', this.value);"
+                    value="">
+                <label>Passward</label>
+            </div>
+            <div class="inputBox">
+                <input type="name" id="name" required onkeyup="this.setAttribute('value', this.value);" value="">
+                <label>Name</label>
+            </div>
+            <input type="button" id="back-main" value="Back " >
+            <input type="button" id="sign-in" value="Sign In"  onclick="signIn()">
+        </form>
+    </div>
+</body>
+<script>
+    $(document).ready(function () {
+        mainBack();
+    })
+
+    function mainBack() {
+        $('#back-main').on('click', () => {
+            location.href = '/';
+        })
+    }
+   async function signIn() {
+            const email = $('#email').val();
+            const password = $('#password').val();
+            const name = $('#name').val();
+          const result = await axios.post('/signin', { email, password, name });
+          alert(JSON.stringify(result));
+            // .then((data)=>{
+            //     alert(JSON.stringify(data));
+            // })
+            // .catch((data)=>{
+            //     alert(JSON.stringify(data));
+            // });
+    
+    }
+
+</script>
+
+</html>

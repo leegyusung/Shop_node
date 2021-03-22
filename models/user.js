@@ -1,0 +1,42 @@
+const Sequelize=require('sequelize');
+
+module.exports=class User extends Sequelize.Model{
+    static init(sequelize){
+        return super.init({
+            email :{
+                type : Sequelize.STRING(40),
+                allowNull:true,
+                unique:true,
+            },
+            password :{
+                type : Sequelize.STRING(80),
+                allowNull:false,
+            },
+            name:{
+                type : Sequelize.STRING(40),
+                allowNull:false,
+            },
+            admin:{
+                type:Sequelize.BOOLEAN,
+                allowNull:false,
+                defaultValue:false,
+            },
+            money:{
+                type:Sequelize.INTEGER,
+                allowNull:false,
+                defaultValue:0,
+            }
+        },
+        {
+            sequelize,
+            timestamps:true,
+            underscored:false,
+            modelName:'User',
+            tableName:'users',
+            paranoid:true,
+            charset:'utf8',
+            collate:'utf8_general_ci',
+        })
+    }
+    static associate(db){}
+}

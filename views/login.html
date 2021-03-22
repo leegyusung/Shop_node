@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Log In</title>
+    <link rel="stylesheet" href="css/signin.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            mainBack();
+            signIn();
+        })
+
+        function mainBack() {
+            $('#back-main').on('click', () => {
+                location.href = '/';
+            })
+        }
+        function signIn() {
+            $('#sign-in').on('click', (e) => {
+                const email = $('#email').val();
+                const password = $('#password').val();
+                const name = $('#name').val();
+
+                e.preventDefault();
+            })
+
+        }
+
+    </script>
+</head>
+
+<body>
+    <div class="box">
+        <h2>Log in</h2>
+        <p></p>
+        <form>
+            <div class="inputBox">
+                <input type="email" id="email" required onkeyup="this.setAttribute('value', this.value);" value="">
+                <label>Email</label>
+            </div>
+            <div class="inputBox">
+                <input type="password" id="password" required onkeyup="this.setAttribute('value', this.value);"
+                    value="">
+                <label>Passward</label>
+            </div>
+            
+            <input type="button" id="back-main" value="Back ">
+            <input type="submit" id="sign-in" value="Log In">
+        </form>
+    </div>
+</body>
+
+</html>
