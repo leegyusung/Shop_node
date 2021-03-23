@@ -10,5 +10,9 @@ router.use((req,res,next)=>{
 router.get('/', (req, res, next) => {
     res.render('main', { title: 'Main' });
 })
+router.get('/update', (req, res, next) => {
+    res.render('update');
+})
+
 
 module.exports=router;

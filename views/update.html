@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Sign In</title>
+    <title>My Page</title>
     <link rel="stylesheet" href="css/signin.css">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -13,24 +13,27 @@
 
 <body>
     <div class="box">
-        <h2>Sign in</h2>
+        <h2>My Page</h2>
         <p></p>
         <form>
+            <input type="hidden" id="userId" value={{user.id}}>
             <div class="inputBox">
-                <input type="email" id="email" required onkeyup="this.setAttribute('value', this.value);" value="">
+                <input type="email" id="email" required onkeyup="this.setAttribute('value', this.value);"
+                    value={{user.email}}>
                 <label>Email</label>
             </div>
             <div class="inputBox">
                 <input type="password" id="password" required onkeyup="this.setAttribute('value', this.value);"
-                    value="">
+                    value={{user.password}}>
                 <label>Passward</label>
             </div>
             <div class="inputBox">
-                <input type="name" id="name" required onkeyup="this.setAttribute('value', this.value);" value="">
+                <input type="name" id="name" required onkeyup="this.setAttribute('value', this.value);"
+                    value={{user.name}}>
                 <label>Name</label>
             </div>
             <input type="button" id="back-main" value="Back ">
-            <input type="button" id="sign-in" value="Sign In" onclick="signIn()">
+            <input type="button" id="sign-in" value="Update" onclick="updateUser()">
         </form>
     </div>
 </body>
@@ -44,17 +47,15 @@
             location.href = '/';
         })
     }
-    async function signIn() {
+    async function updateUser() {
+        const userId = $('#userId').val();
         const email = $('#email').val();
         const password = $('#password').val();
         const name = $('#name').val();
-        if (email != '' && password != '' && name != '') {
-            const result = await axios.post('/signin', { email, password, name });
-            alert('회원가입이 완료되었습니다.');
-            location.href = '/'
-        }else{
-            alert('정보를 입력해주세요');
-        }
+        const result = await axios.put('/signin/update', { userId, email, password, name });
+        alert('정보변경이 완료되었습니다.');
+        location.href = '/'
+
     }
 
 </script>

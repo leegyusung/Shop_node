@@ -2,10 +2,25 @@
 
 {% block content %}
 <script>
- function logOut(){
-  axios.get('/login/logout');
-  location.reload();
-}
+  async function logOut() {
+    const data=confirm('로그아웃 하시겠습니까?');
+    if (data) {
+      await axios.get('/login/logout');
+      location.reload();
+    }
+
+  }
+  async function myPage(userId){
+     await axios.post(`/signin/${userId}`);
+     location.href='/update';
+
+    // .then((data)=>{
+    //   alert('1');
+    // })
+    // .catch((data)=>{
+    //   alert('2');
+    // })
+  }
 
 </script>
 
@@ -13,7 +28,7 @@
   <!-- Navigation -->
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="index.html">{{title}}</a>
+      <a class="navbar-brand" style="color: aliceblue;">{{title}}</a>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
         data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
         aria-label="Toggle navigation">
@@ -23,8 +38,14 @@
 
         <ul class="navbar-nav ml-auto">
           {% if user and user.id %}
-          <li class="nav-item">
-            <a class="nav-link">{{user.name}} 님</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              {{user.name}} 님
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownBlog">
+              <a class="dropdown-item" onclick="myPage(`{{user.id}}`)">My Page</a>
+            </div>
           </li>
           <li class="nav-item">
             <a class="nav-link" onclick="logOut()">Logout</a>
@@ -40,7 +61,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
-              Other Pages
+              Products
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownBlog">
               <a class="dropdown-item" href="full-width.html">Full Width Page</a>
