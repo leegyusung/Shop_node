@@ -14,13 +14,13 @@ module.exports = () => {
             if (exUser) {
                 const result = await bcrypt.compare(password, exUser.password);
                 console.log(result);
-                if(result){
-                    done(null,exUser);
-                }else{
-                    done(null,false,{message:'비밀번호가 일치하지 않습니다'});
+                if (result) {
+                    done(null, exUser);
+                } else {
+                    done(null, false, { message:'비밀번호가 일치하지 않습니다' });
                 }
-            }else{
-                done(null,false,{message:'존재하지 않는 회원입니다'});
+            } else {
+                done(null, false, { message:'존재하지 않는 회원입니다' });
             }
         } catch (error) {
             console.error(error);

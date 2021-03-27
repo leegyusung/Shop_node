@@ -2,11 +2,12 @@ const express = require('express');
 const bcrypt = require('bcrypt')
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const User = require('../models/user');
-const e = require('express');
-
 
 const router = express.Router();
 
+router.get('/',isNotLoggedIn,(req,res,next)=>{
+    res.render('signin');
+})
 
 router.post('/', isNotLoggedIn, async (req, res, next) => {
     const hash = await bcrypt.hash(req.body.password, 12);

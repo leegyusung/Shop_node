@@ -13,6 +13,7 @@ const passportConfig = require('./passport');
 const indexRouter=require('./router');
 const signRouter = require('./router/signin');
 const loginRouter =require('./router/login');
+const productsRouter =require('./router/productList');
 
 
 dotenv.config();
@@ -53,6 +54,9 @@ sequelize.sync({ force: false })//force가 true 면 서버가 돌아갈때마다
 app.use('/',indexRouter);
 app.use('/signin', signRouter);
 app.use('/login',loginRouter);
+app.use('/product',productsRouter);
+
+
 
 app.listen(app.get('port'), () => {
     console.log(app.get('port'), '포트에서 사용중입니다');

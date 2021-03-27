@@ -5,6 +5,9 @@ const User = require('../models/user');
 
 const router = express.Router();
 
+router.get('/',isNotLoggedIn,(req,res,next)=>{
+    res.render('login');
+})
 router.post('/', isNotLoggedIn, (req, res, next) => {
     passport.authenticate('local', (authError, user, info) => {
         if (authError) {
@@ -12,22 +15,26 @@ router.post('/', isNotLoggedIn, (req, res, next) => {
             return next(authError);
         }
         if (!user) {
-            return res.redirect('/error');
+            return res.status(400).json({ message: info.message});
+    
         }
         return req.login(user, (loginError) => {
             if (loginError) {
                 console.error(loginError);
                 return next(loginError);
             }
+            console.log(2);
             return res.redirect('/');
         });
     })(req, res, next);
 });
 
-router.get('/logout',isLoggedIn,(req,res)=>{
+router.get('/logout', isLoggedIn, (req, res) => {
     req.logout();
     req.session.destroy();
     res.redirect('/');
-})
+});
+
+
 module.exports = router;
 

@@ -53,8 +53,11 @@
                 password: password,
             },
             success: function (data) {
-                // getMain();
-                location.href = '/';
+                location.href='/';
+
+            },
+            error:function(err){
+                alert(err.responseJSON.message);
             }
         })
 
