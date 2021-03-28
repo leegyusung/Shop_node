@@ -1,22 +1,24 @@
 const express = require('express');
 const Product = require('../models/product');
+const path=require('path');
 
 const router = express.Router();
 
 
-router.get('/', async(req, res, next) => {
-    console.log('규성이');
+
+router.get('/:id', async (req, res, next) => {
+    const type = req.params.id;
     try {
         const result = await Product.findAll({
-            where: { proType: 'top' }
+            where: { proType: type }
         })
-        console.log(result[0].id);
-        res.render('productsList', { result });
+        console.log(result);
+        
+        res.render('productsList', { result, type: type });
     } catch (error) {
         console.error(error);
         next(error);
     }
-   
-})
+});
 
 module.exports = router;
