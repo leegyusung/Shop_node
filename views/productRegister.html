@@ -2,9 +2,25 @@
 
 {% block content %}
 <script>
-    function productRegister() {
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#image_container').attr('style', 'block');
+                $('#img_preview').attr('src', e.target.result);
+                $('#delete_btn').removeAttr('disabled');
+                // const formData = input.files[0]
+                // axios.post('/productList/img', formData);
 
+            }
+            reader.readAsDataURL(input.files[0]);
+
+
+        }
     }
+        // function removeURL(){
+        //     $('#img_preview').attr('src','' );
+        // }
 </script>
 
 <body>
@@ -21,22 +37,30 @@
             </li>
             <li class="breadcrumb-item active">Product Register</li>
         </ol>
-
-        <form action="/productRegister" method="POST" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-lg-8 mb-4">
-                    <input type="file" name="image">
-                </div>
+        <div class="img-preview">
+            <div id="image_container" style="display: none;" alt="미리보기">
+                <img id="img_preview" width="250" height="250" />
             </div>
+        </div>
+        <form action="/productRegister" method="POST" enctype="multipart/form-data">
+
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <label id="img-label" for="img"></label>
+                <input id="img" type="file" name="image" accept="image/*" onchange="readURL(this);" />
+                <button id="delete_btn" class="btn btn-primary" type="button" class="btn" disabled
+                    onclick="removeURL()">Delete</button>
+            </div>
+        </div>
+
+     
             <div class="row">
                 <div class="col-lg-8 mb-4">
                     <h3>Product Register</h3>
-
                     <div class="control-group form-group">
                         <div class="controls">
                             <label>Product Type:</label>
-
-                            <select name="type">
+                            <select id="type" name="type" class="type" required>
                                 <option value="none">=== None ===</option>
                                 <option value="top">Top</option>
                                 <option value="bottom">Bottom</option>
@@ -49,35 +73,30 @@
                     <div class="control-group form-group">
                         <div class="controls">
                             <label>Product Name:</label>
-                            <input type="text" class="form-control" id="name" required
-                                data-validation-required-message="Please enter your Product Name.">
+                            <input type="text" class="form-control" name="name" required>
                         </div>
                     </div>
                     <div class="control-group form-group">
                         <div class="controls">
                             <label>Product Price:</label>
-                            <input type="number" class="form-control" id="price" required
-                                data-validation-required-message="Please enter your Product Price." min="0" value="0">
+                            <input type="number" class="form-control" name="price" required min="0" value="0">
                         </div>
                     </div>
                     <div class="control-group form-group">
                         <div class="controls">
                             <label>Product Amount:</label>
-                            <input type="number" class="form-control" id="amount" required
-                                data-validation-required-message="Please enter your email address." min="1" max="100000"
+                            <input type="number" class="form-control" name="amount" required min="1" max="100000"
                                 value="1">
                         </div>
                     </div>
                     <div class="control-group form-group">
                         <div class="controls">
                             <label>Product Content:</label>
-                            <textarea rows="10" cols="100" class="form-control" id="content" required
-                                data-validation-required-message="Please enter your Product Content" maxlength="999"
+                            <textarea rows="10" cols="100" class="form-control" name="content" required maxlength="999"
                                 style="resize:none"></textarea>
                         </div>
                     </div>
-                    <!-- For success/fail messages -->
-                    <button type="submit" class="btn btn-primary" id="sendMessageButton">Register</button>
+                    <button class="btn btn-primary" type="submit" id="sendMessageButton">Register</button>
         </form>
     </div>
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const Product = require('../models/product');
-const path=require('path');
+const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const path = require('path');
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.get('/:id', async (req, res, next) => {
             where: { proType: type }
         })
         console.log(result);
-        
+
         res.render('productsList', { result, type: type });
     } catch (error) {
         console.error(error);
