@@ -7,9 +7,9 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>{{title}}</title>
+  <title>{{title}}</title> 
 
-  <!-- Bootstrap core CSS -->
+
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Custom styles for this template -->
@@ -22,8 +22,31 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
- 
 
+   <!--bootstrap js--> 
+   <script src="../vendor/bootstrap/js/bootstrap.min.js"></script> 
+   <script src="../vendor/bootstrap/js/bootstrap-select.min.js"></script>
+   <script src="../vendor/bootstrap/js/slick.min.js"></script> 
+   <script src="../vendor/bootstrap/js/wow.min.js"></script>
+   <!--custom js--> 
+   <script src="../vendor/bootstrap/js/custom.js"></script>
+
+
+
+  <script>
+    async function logOut() {
+      const data = confirm('로그아웃 하시겠습니까?');
+      if (data) {
+        await axios.get('/login/logout');
+        location.reload();
+      }
+    }
+    async function myPage(userId) {
+      await axios.post(`/signin/${userId}`);
+      location.href = '/update';
+    }
+
+  </script>
 
 </head>
 

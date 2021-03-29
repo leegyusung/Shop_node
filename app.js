@@ -13,6 +13,7 @@ const passportConfig = require('./passport');
 const indexRouter = require('./router');
 const signRouter = require('./router/signin');
 const loginRouter = require('./router/login');
+const productRouter=require('./router/product');
 const productsRouter = require('./router/productList');
 const productRegisterRouter = require('./router/productRegister');
 
@@ -57,6 +58,7 @@ sequelize.sync({ force: false })//force가 true 면 서버가 돌아갈때마다
 app.use('/', indexRouter);
 app.use('/signin', signRouter);
 app.use('/login', loginRouter);
+app.use('/product',productRouter);
 app.use('/productList', productsRouter);
 app.use('/productRegister', productRegisterRouter);
 

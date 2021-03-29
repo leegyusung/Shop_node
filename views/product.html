@@ -1,19 +1,25 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<script>
+  function total() {
+    const price = $('#sell_price').val();
+    const total = price * $('#sell_amount').val();
+    $('#sum').attr('value',total);
+  }
+</script>
 
 <body>
-    
+
   <!-- Page Content -->
   <div class="container">
-
-  </br>
-
+    </br>
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <a href="/">Main</a>
       </li>
-      <li class="breadcrumb-item active">Top</li>
+      <li class="breadcrumb-item active">{{result.proType}}</li>
+      <li class="breadcrumb-item active">{{result.proName}}</li>
     </ol>
 
     <!-- Blog Post -->
@@ -22,30 +28,27 @@
         <div class="row">
           <div class="col-lg-6">
             <a href="#">
-              <img class="img-fluid rounded" src="uploads/면접.jpg" alt="" height="450" width="300">
+              <img class="img-fluid rounded" src="{{result.proPhoto}}" alt="" height="450" width="300">
             </a>
           </div>
           <div class="col-lg-6">
-            <h2 class="card-title">Post Title</h2>
-            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!</p>
-            <p>Price</p>
-            <form name="form" method="get">
-              수량 : <input type=hidden name="sell_price" value="5500">
-              <input type="text" name="amount" value="1" size="3" onchange="change();">
-              <input type="button" value=" + " onclick="add();"><input type="button" value=" - " onclick="del();"><br>
-              
-              금액 : <input type="text" name="sum" size="11" readonly>원
-              </form>
-            </br>
+            <h2 class="card-title">{{result.proName}}</h2>
+            <p class="card-text">{{result.proContent}}</p>
+            <p><b>Amount</b> {{result.proAmount}} 개</p>
+            <p><b>Price</b> {{result.proPrice}} 원</p>
+            수량 : <input type=hidden id="sell_price" value="{{result.proPrice}}">
+            <input type="number" id='sell_amount' max="{{result.proAmount}}" min="1" value="1" onchange="total()">
+
+
+             금액 : <input type="text" id="sum" size="11" readonly value="{{result.proPrice}}">원
+
+            </br></br>
             <a href="#" class="btn btn-primary">PurChase &rarr;</a>
             <a href="#" class="btn btn-primary">WishList &rarr;</a>
           </div>
         </div>
       </div>
-      <div class="card-footer text-muted">
-        Posted on January 1, 2017 by
-        <a href="#">Start Bootstrap</a>
-      </div>
+      <div class="card-footer text-muted">{{result.createdAt}}</div>
     </div>
 
     <!-- Pagination -->
