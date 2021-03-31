@@ -16,6 +16,7 @@ const loginRouter = require('./router/login');
 const productRouter=require('./router/product');
 const productsRouter = require('./router/productList');
 const productRegisterRouter = require('./router/productRegister');
+const commentRouter=require('./router/comment');
 
 
 dotenv.config();
@@ -61,6 +62,7 @@ app.use('/login', loginRouter);
 app.use('/product',productRouter);
 app.use('/productList', productsRouter);
 app.use('/productRegister', productRegisterRouter);
+app.use('/comment',commentRouter);
 
 
 

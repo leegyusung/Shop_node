@@ -2,10 +2,26 @@
 
 {% block content %}
 <script>
+  window.onload = function () {
+    getComment();
+  }
   function total() {
     const price = $('#sell_price').val();
     const total = price * $('#sell_amount').val();
-    $('#sum').attr('value',total);
+    $('#sum').attr('value', total);
+  }
+
+  async function comment(userId) {
+    const productId = $('#product_Id').val();
+    const commenter = userId;
+    const comment = $('#text_comment').val();
+    await axios.post('/comment', { productId, commenter, comment });
+    getComment();
+
+  }
+  async function getComment() {
+    const productId = $('#product_Id').val();
+    await axios.get(`/product/{{productId}}`);
   }
 </script>
 
@@ -32,6 +48,7 @@
             </a>
           </div>
           <div class="col-lg-6">
+            <input id="product_Id" type="hidden" value="{{result.id}}">
             <h2 class="card-title">{{result.proName}}</h2>
             <p class="card-text">{{result.proContent}}</p>
             <p><b>Amount</b> {{result.proAmount}} 개</p>
@@ -40,7 +57,7 @@
             <input type="number" id='sell_amount' max="{{result.proAmount}}" min="1" value="1" onchange="total()">
 
 
-             금액 : <input type="text" id="sum" size="11" readonly value="{{result.proPrice}}">원
+            금액 : <input type="text" id="sum" size="11" disabled value="{{result.proPrice}}">원
 
             </br></br>
             <a href="#" class="btn btn-primary">PurChase &rarr;</a>
@@ -50,16 +67,37 @@
       </div>
       <div class="card-footer text-muted">{{result.createdAt}}</div>
     </div>
+    <div class="get-box" style="margin:auto">
+      <h4>Comments</h4>
+      {% if user.id %}
+      <form class="get-form">
+        <textarea id='text_comment' placeholder="Enter your comment" style="resize:none" rows="2" cols="100"></textarea>
+        <button class="btn btn-primary" style="height: 57px; top: -22px; position: relative;"
+          onclick="comment(`{{user.id}}`)">Add</button>
+      </form>
+      {% else %}
+      <form class="get-form">
+        <textarea placeholder="Please log in and use it." style="resize:none" rows="2" cols="100" disabled></textarea>
+        <button class="btn btn-primary" style="height: 57px; top: -22px; position: relative;" disabled>Add</button>
+      </form>
+      {% endif %}
+    </div>
+    <form class="get-form">
+      {% for item in commentResult %}
+      <textarea style="resize:none" rows="1" cols="100" disabled>작성자 : {{item.User.name}} {{item.comment}}</textarea>
+      {% endfor %}
+    </form>
+  </div>
 
-    <!-- Pagination -->
-    <ul class="pagination justify-content-center mb-4">
-      <li class="page-item">
-        <a class="page-link" href="#">&larr; Older</a>
-      </li>
-      <li class="page-item disabled">
-        <a class="page-link" href="#">Newer &rarr;</a>
-      </li>
-    </ul>
+  <!-- Pagination -->
+  <ul class="pagination justify-content-center mb-4">
+    <li class="page-item">
+      <a class="page-link" href="#">&larr; Older</a>
+    </li>
+    <li class="page-item disabled">
+      <a class="page-link" href="#">Newer &rarr;</a>
+    </li>
+  </ul>
 
   </div>
 
