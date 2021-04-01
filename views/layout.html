@@ -27,7 +27,7 @@
       const data = confirm('로그아웃 하시겠습니까?');
       if (data) {
         await axios.get('/login/logout');
-        location.reload();
+        location.href='/';
       }
     }
     async function myPage(userId) {
@@ -83,13 +83,26 @@
               <a class="dropdown-item" href="/productRegister">Register</a>
             </div>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/sidebar">Manage</a>
+          </li>
           {% endif %}
         </ul>
       </div>
     </div>
   </nav>
+
+
+  
   {% block content %}
   {% endblock %}
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2019</p>
+    </div>
+    <!-- /.container -->
+  </footer>
 </body>
 
 </html>

@@ -15,3 +15,10 @@ body {
   .portfolio-item {
     margin-bottom: 30px;
   }
+  footer{ position:fixed; 
+    left:0px; 
+    bottom:0px; 
+    height:60px; 
+    width:100%; 
+    background:grey; 
+    color: white; }

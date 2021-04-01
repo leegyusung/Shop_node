@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<script>
+    $(document).ready(function () {
+        $('.list-group-item').click(async function () {
+            var index = $('.list-group-item').index(this);
+           
+            axios.get(`/sidebar/${index}`)
+                .then((data) => {
+                    $('#content_col').empty();
+                    $('.list-group-item').eq(index).attr('class','list-group-item active');
+                    $('#content_col').append(data.data);
+                })
+                .catch((data) => {
+
+                })
+
+        })
+    })
+</script>
+<body>
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading/Breadcrumbs -->
+        <h1 class="mt-4 mb-3">Admin Manage</h1>
+
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+        </ol>
+
+        <!-- Content Row -->
+        <div class="row">
+            <!-- Sidebar Column -->
+            <div class="col-lg-3 mb-4">
+                <div class="list-group">
+                    <a class="list-group-item">회원목록</a>
+                    <a class="list-group-item">상품목록</a>
+                    <a class="list-group-item">Services</a>
+                    <a class="list-group-item">Contact</a>
+                </div>
+            </div>
+            <!-- Content Column -->
+            <div class="col-lg-9 mb-4">
+                <div id="content_col"></div>
+            </div>
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
+   
+</body>
+{% endblock %}

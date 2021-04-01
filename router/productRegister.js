@@ -32,7 +32,7 @@ router.get('/', isLoggedIn, (req, res, next) => {
     res.render('productRegister');
 });
 
-router.post('/', upload.single('image'), async (req, res, next) => {
+router.post('/', upload.single('image'), isLoggedIn, async (req, res, next) => {
     try {
         await Product.create({
             proType: req.body.type,
