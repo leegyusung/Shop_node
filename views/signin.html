@@ -49,10 +49,17 @@
         const password = $('#password').val();
         const name = $('#name').val();
         if (email != '' && password != '' && name != '') {
-            const result = await axios.post('/signin', { email, password, name });
-            alert('회원가입이 완료되었습니다.');
-            location.href = '/'
-        }else{
+            const result = await axios.post('/signin', { email, password, name })
+                .then((data) => {
+                    alert('회원가입이 완료되었습니다.');
+                    location.href = '/'
+                })
+                .catch((data)=>{
+                    alert('존재하는 이메일입니다.');
+                    location.reload();
+                })
+
+        } else {
             alert('정보를 입력해주세요');
         }
     }

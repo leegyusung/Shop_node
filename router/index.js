@@ -41,10 +41,38 @@ router.get('/sidebar/:id', isLoggedIn, async (req, res, next) => {
         console.error(error);
         next(error);
     }
-})
+});
+router.get('/sidebar/userlist/:deleteUser', isLoggedIn, async (req, res, next) => {
+    const deleteUser = req.params.deleteUser;
+    try {
+        const result = await User.destroy({
+            where: { id: deleteUser }
+        })
+        res.render('userlist', { result });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+
+});
+router.get('/sidebar/productlist/:deleteProduct', isLoggedIn, async (req, res, next) => {
+    const deleteProduct = req.params.deleteProduct;
+    try {
+        const result = await Product.destroy({
+            where: { id: deleteProduct }
+        })
+        res.render('productAll', { result });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+
+});
+
+
 router.get('/error', (req, res, next) => {
     res.render('error');
-})
+});
 
 
 module.exports = router;
