@@ -71,6 +71,7 @@
         </tr>
     </thead>
     <tbody>
+        {% if userFlag %}
         {% for item in result %}
         <tr class="user_list_tr">
             <td>{{item.id}}</td>
@@ -81,6 +82,10 @@
             <td><input type="button" class="delete_btn" value="삭제"></td>
         </tr>
         {% endfor %}
-        <!-- and so on... -->
+        {% elif dataFlag %}
+        <tr class="user_list_tr">
+            <td colspan="8" style="text-align: center;">No Data</td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>

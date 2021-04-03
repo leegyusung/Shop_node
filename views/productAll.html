@@ -37,7 +37,7 @@
     }
 </style>
 <script>
-     $(document).ready(function () {
+    $(document).ready(function () {
         // const index=$('.styled-table tbody tr').length;
         $('.delete_btn').click(async function () {
             const tr = $(this).parent().parent();
@@ -73,6 +73,7 @@
         </tr>
     </thead>
     <tbody>
+        {% if userFlag %}
         {% for item in result %}
         <tr>
             <td>{{item.id}}</td>
@@ -82,9 +83,14 @@
             <td>{{item.proAmount}}</td>
             <td>{{item.proContent}}</td>
             <td>{{item.createdAt}}</td>
-            <td><input type="button" class="delete_btn" value="삭제"></td>
+
+            <td><input type="button" class="delete_btn" value="삭제"> {{dataFlag}}</td>
         </tr>
         {% endfor %}
-        <!-- and so on... -->
+        {% elif dataFlag %}
+        <tr class="user_list_tr">
+            <td colspan="8" style="text-align: center;">No Data</td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>

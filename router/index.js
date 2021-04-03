@@ -31,11 +31,32 @@ router.get('/sidebar/:id', isLoggedIn, async (req, res, next) => {
     try {
         if (Id == 0) {
             const result = await User.findAll({});
-            res.render('userlist', { result });
+            if(result.length==0){
+                res.render('userlist', {
+                    result,
+                    dataFlag: 'true'
+                });
+            }else{
+                res.render('userlist', {
+                    result,
+                    userFlag: 'true'
+                });
+            }
         }
         if (Id == 1) {
             const result = await Product.findAll({});
-            res.render('productAll', { result });
+            if (result.length == 0) {
+                res.render('productAll', {
+                    result,
+                    dataFlag: 'true'
+                });
+            }
+            else {
+                res.render('productAll', {
+                    result,
+                    userFlag: 'true'
+                });
+            }
         }
     } catch (error) {
         console.error(error);
