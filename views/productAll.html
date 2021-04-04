@@ -46,11 +46,11 @@
 
             if (data) {
                 const deleteProduct = td.eq(0).text();
-                await axios.get(`/sidebar/productlist/${deleteProduct}`)
+                await axios.get(`/adminSidebar/productlist/${deleteProduct}`)
                     .then((data) => {
                         alert('삭제가 완료되었습니다.');
                     })
-                await axios.get(`/sidebar/1`)
+                await axios.get(`/adminSidebar/1`)
                     .then((data) => {
                         $('#content_col').empty();
                         $('#content_col').append(data.data);
@@ -64,10 +64,10 @@
         <tr>
             <th>ID</th>
             <th>Type</th>
+            <th>Product</th>
             <th>Name</th>
             <th>Price</th>
             <th>Amount</th>
-            <th>Content</th>
             <th>Created</th>
             <th>Delete</th>
         </tr>
@@ -78,13 +78,13 @@
         <tr>
             <td>{{item.id}}</td>
             <td>{{item.proType}}</td>
+            <td><img src="{{item.proPhoto}}" width="180" height="180"></td>
             <td>{{item.proName}}</td>
             <td>{{item.proPrice}}</td>
             <td>{{item.proAmount}}</td>
-            <td>{{item.proContent}}</td>
             <td>{{item.createdAt}}</td>
 
-            <td><input type="button" class="delete_btn" value="삭제"> {{dataFlag}}</td>
+            <td><input type="button" class="delete_btn" value="삭제"></td>
         </tr>
         {% endfor %}
         {% elif dataFlag %}

@@ -1,0 +1,100 @@
+<style>
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .styled-table thead tr {
+        background-color: #003098;
+        color: #ffffff;
+        text-align: left;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 12px 15px;
+    }
+
+    .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
+
+    .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
+
+    .styled-table tbody tr:last-of-type {
+        border-bottom: 2px solid #003098;
+    }
+
+    .styled-table tbody tr.active-row {
+        font-weight: bold;
+        color: #000f98;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        const price=$('#pro_price').html();
+        const amount=$('#pro_amount').html();
+        const total=price*amount;
+        $('#total_sum').html(total+' 원');
+
+        // const index=$('.styled-table tbody tr').length;
+        $('.delete_btn').click(async function () {
+            const tr = $(this).parent().parent();
+            const td = tr.children();
+            const data = confirm('해당 장바구니를 삭제 하시겠습니까?');
+
+            if (data) {
+                const deleteWishList = td.eq(0).text();
+                await axios.get(`/userSidebar/wishlist/${deleteWishList}`)
+                    .then((data) => {
+                        alert('삭제가 완료되었습니다.');
+                    })
+                await axios.get(`/userSidebar/0`)
+                    .then((data) => {
+                        $('#content_col').empty();
+                        $('#content_col').append(data.data);
+                    });
+            }
+        })
+    })
+</script>
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>ProductName</th>
+            <th>ProductPrice</th>
+            <th>ProductAmount</th>
+            <th>Total</th>
+            <th>Created</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if userFlag %}
+        {% for item in result %}
+        <tr>
+            <td>{{item.id}}</td>
+            <td><img src="{{item.Product.proPhoto}}" width="170" height="170"></td>
+            <td>{{item.Product.proName}}</td>
+            <td id="pro_price">{{item.Product.proPrice}}</td>
+            <td id="pro_amount">{{item.wishListAmount}}</td>
+            <td id="total_sum"></td>
+            <td>{{item.created_at}}</td>
+            <td><input type="button" class="delete_btn" value="삭제"></td>
+        </tr>
+        {% endfor %}
+        {% elif dataFlag %}
+        <tr class="user_list_tr">
+            <td colspan="8" style="text-align: center;">No Data</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>

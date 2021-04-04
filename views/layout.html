@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>{{title}}</title> 
+  <title>{{title}}</title>
 
 
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
       const data = confirm('로그아웃 하시겠습니까?');
       if (data) {
         await axios.get('/login/logout');
-        location.href='/';
+        location.href = '/';
       }
     }
     async function myPage(userId) {
@@ -52,7 +52,7 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
 
         <ul class="navbar-nav ml-auto">
-          {% if user and user.id %}
+          {% if user.id %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
@@ -73,7 +73,9 @@
             <a class="nav-link" href="/signin">Sign in</a>
           </li>
           {% endif %}
-          {% if user and user.admin %}
+
+
+          {% if user.admin %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
@@ -84,7 +86,11 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/sidebar">Manage</a>
+            <a class="nav-link" href="/adminSidebar">Manage</a>
+          </li>
+          {% elif user.id %}
+          <li class="nav-item">
+            <a class="nav-link" href="/userSidebar">My Page</a>
           </li>
           {% endif %}
         </ul>
@@ -93,7 +99,7 @@
   </nav>
 
 
-  
+
   {% block content %}
   {% endblock %}
 

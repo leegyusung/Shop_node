@@ -1,6 +1,5 @@
 const express = require('express');
 const Product = require('../models/product');
-const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const path = require('path');
 
 const router = express.Router();

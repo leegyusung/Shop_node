@@ -23,6 +23,30 @@
     const productId = $('#product_Id').val();
     await axios.get(`/product/{{productId}}`);
   }
+
+  async function wishList(id) {
+    const data = confirm('장바구니에 추가하시겠습니까?');
+    if (data) {
+      const userId = id;
+      const productId = $('#product_Id').val();
+      const amount = $('#sell_amount').val();
+      await axios.post('/wishlist', { userId, productId, amount })
+        .then((result) => {
+          alert('장바구니에 추가되었습니다.');
+        })
+        .catch((result) => {
+
+        })
+    }
+  }
+//   function getFormatDate(date){
+//     var year = date.getFullYear();              //yyyy
+//     var month = (1 + date.getMonth());          //M
+//     month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
+//     var day = date.getDate();                   //d
+//     day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
+//     return  year + '-' + month + '-' + day;       //'-' 추가하여 yyyy-mm-dd 형태 생성 가능
+// }
 </script>
 
 <body>
@@ -37,7 +61,6 @@
       <li class="breadcrumb-item active">{{result.proType}}</li>
       <li class="breadcrumb-item active">{{result.proName}}</li>
     </ol>
-
     <!-- Blog Post -->
     <div class="card mb-4">
       <div class="card-body">
@@ -60,8 +83,13 @@
             금액 : <input type="text" id="sum" size="11" disabled value="{{result.proPrice}}">원
 
             </br></br>
-            <a href="#" class="btn btn-primary">PurChase &rarr;</a>
-            <a href="#" class="btn btn-primary">WishList &rarr;</a>
+            {% if user.id %}
+            <input type="button" class="btn btn-primary" value="PurChase">
+            <input type="button" class="btn btn-primary" onclick="wishList(`{{user.id}}`)" value="WishList">
+            {% else %}
+            <input type="button" class="btn btn-primary" value="PurChase" disabled>
+            <input type="button" class="btn btn-primary" onclick="wishList(`{{user.id}}`)" value="WishList" disabled>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -104,6 +132,6 @@
   </div>
   <!-- /.container -->
 
-  
+
 </body>
 {% endblock %}

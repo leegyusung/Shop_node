@@ -46,11 +46,11 @@
 
             if (data) {
                 const deleteUser = td.eq(0).text();
-                await axios.get(`/sidebar/userlist/${deleteUser}`)
+                await axios.get(`/adminSidebar/userlist/${deleteUser}`)
                     .then((data) => {
                         alert('삭제가 완료되었습니다.');
                     })
-                await axios.get(`/sidebar/0`)
+                await axios.get(`/adminSidebar/0`)
                     .then((data) => {
                         $('#content_col').empty();
                         $('#content_col').append(data.data);

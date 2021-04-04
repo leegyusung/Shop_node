@@ -35,10 +35,13 @@ module.exports = class Product extends Sequelize.Model {
                 underscored: false,
                 modelName: 'Product',
                 tableName: 'products',
-                paranoid: true,
+                paranoid: false,
                 charset: 'utf8',
                 collate: 'utf8_general_ci',
             })
     }
-    static associate(db) {}
+    static associate(db) {
+        db.Product.hasMany(db.Purchaselist, { foreignkey: 'purChaseProductId', sourceKey: 'id' });
+        db.Product.hasMany(db.Wishlist, { foreignkey: 'wishListProductId', sourceKey: 'id' });
+    }
 }
