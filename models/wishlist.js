@@ -8,6 +8,11 @@ module.exports = class Wishlist extends Sequelize.Model {
                 allowNull: false,
                 defaultValue: 0,
             },
+            wishListTotal: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                defaultValue: 0,
+            },
             created_at: {
                 type: Sequelize.DATE,
                 allowNull: true,

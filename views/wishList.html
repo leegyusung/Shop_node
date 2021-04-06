@@ -38,16 +38,21 @@
 </style>
 <script>
     $(document).ready(function () {
-        const price=$('#pro_price').html();
-        const amount=$('#pro_amount').html();
-        const total=price*amount;
-        $('#total_sum').html(total+' 원');
+        // const price = $('#pro_price').html();
+        // const amount = $('#pro_amount').val();
+        // const total = price * amount;
+        // $('#total_sum').html(total);
 
-        // const index=$('.styled-table tbody tr').length;
+        $('#pro_amount').change(() => {
+            const price = $('#pro_price').html();
+            const amount = $('#pro_amount').val();
+            const total = price * amount;
+            $('#total_sum').html(total);
+        })
         $('.delete_btn').click(async function () {
             const tr = $(this).parent().parent();
             const td = tr.children();
-            const data = confirm('해당 장바구니를 삭제 하시겠습니까?');
+            const data = confirm('해당 상품을 삭제 하시겠습니까?');
 
             if (data) {
                 const deleteWishList = td.eq(0).text();
@@ -62,6 +67,69 @@
                     });
             }
         })
+
+        $('.update_btn').click(async function () {
+            const tr = $(this).parent().parent();
+            const td = tr.children();
+            const data = confirm('해당 상품을 변경 하시겠습니까?');
+
+            if (data) {
+                const wishListId = td.eq(0).text();
+                const wishAmount = $('#pro_amount').val();
+                const wistTotal = $('#total_sum').text();
+                await axios.post(`/wishlist/update`, { wishListId, wishAmount, wistTotal })
+                    .then((data) => {
+                        alert('변경이 완료되었습니다.');
+                    })
+                await axios.get(`/userSidebar/0`)
+                    .then((data) => {
+                        $('#content_col').empty();
+                        $('#content_col').append(data.data);
+                    });
+            }
+        })
+
+        $('.purchase_btn').click(async function () {
+            const tr = $(this).parent().parent();
+            const td = tr.children();
+            const data = confirm('해당 상품을 구매 하시겠습니까?');
+            if (data) {
+                const wishlistId = $('#wish_id').val();
+                const name = $('#pro_name').text();
+                const curAmount = $('#product_amount').val();
+                const amount = $('#pro_amount').val();
+                const userId = $('#user_id').val();
+                const productId = $('#product_id').val();
+                const price = $('#total_sum').text();
+                const type = 1;
+                const money = `{{user.money}}`;
+                //alert(curAmount + ' ' + amount + ' ' + userId + ' ' + productId + ' ' + price + ' ' + money);
+                //84 1   3 3
+                if (money < price) {
+                    alert('보유금액이 부족합니다.')
+                    return false;
+                }
+                if (curAmount == 0) {
+                    alert('보유재고가 부족합니다.')
+                    return false;
+                }
+                if (price > money) {
+                    alert('상품가격이 보유금액을 초과합니다.')
+                    return false;
+                }
+                await axios.post('/purchase', { type, wishlistId, userId, productId, curAmount, amount, price, money })
+                    .then((result) => {
+                        alert(`${name} 을 구매하였습니다.`);
+
+                    });
+                await axios.get(`/userSidebar/0`)
+                    .then((data) => {
+                        $('#content_col').empty();
+                        $('#content_col').append(data.data);
+                        location.href='/userSidebar'
+                    });
+            }
+        })
     })
 </script>
 <table class="styled-table">
@@ -73,22 +141,30 @@
             <th>ProductPrice</th>
             <th>ProductAmount</th>
             <th>Total</th>
-            <th>Created</th>
-            <th>Delete</th>
+            <th colspan="3">Action</th>
         </tr>
     </thead>
     <tbody>
         {% if userFlag %}
         {% for item in result %}
+        <input type="hidden" id="wish_id" value="{{item.id}}">
+        <input type="hidden" id="user_id" value="{{item.wishUserId}}">
+        <input type="hidden" id="product_id" value="{{item.wishListProductId}}">
+        <input type="hidden" id="product_amount" value="{{item.Product.proAmount}}">
         <tr>
             <td>{{item.id}}</td>
-            <td><img src="{{item.Product.proPhoto}}" width="170" height="170"></td>
-            <td>{{item.Product.proName}}</td>
+            <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
+            <td id="pro_name">{{item.Product.proName}}</td>
             <td id="pro_price">{{item.Product.proPrice}}</td>
-            <td id="pro_amount">{{item.wishListAmount}}</td>
-            <td id="total_sum"></td>
-            <td>{{item.created_at}}</td>
+            <td><input type="number" id="pro_amount" value="{{item.wishListAmount}}" max="{{item.Product.proAmount}}"
+                    min="1" onchange=""></td>
+            <td id="total_sum">{{item.wishListTotal}}</td>
+            <td><input type="button" class="update_btn" value="변경"></td>
             <td><input type="button" class="delete_btn" value="삭제"></td>
+            <td><input type="button" class="purchase_btn" value="구매"></td>
+        </tr>
+        <tr>
+            <td colspan="9"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
         </tr>
         {% endfor %}
         {% elif dataFlag %}

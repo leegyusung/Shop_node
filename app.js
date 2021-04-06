@@ -18,6 +18,7 @@ const productsRouter = require('./router/productList');
 const productRegisterRouter = require('./router/productRegister');
 const commentRouter=require('./router/comment');
 const wishlistRouter=require('./router/wishlist');
+const purchaselistRouter=require('./router/purchase');
 
 
 dotenv.config();
@@ -65,6 +66,7 @@ app.use('/productList', productsRouter);
 app.use('/productRegister', productRegisterRouter);
 app.use('/comment',commentRouter);
 app.use('/wishlist',wishlistRouter);
+app.use('/purchase',purchaselistRouter);
 
 
 app.listen(app.get('port'), () => {

@@ -30,9 +30,43 @@
       const userId = id;
       const productId = $('#product_Id').val();
       const amount = $('#sell_amount').val();
-      await axios.post('/wishlist', { userId, productId, amount })
+      const price = $('#sum').val();
+      await axios.post('/wishlist', { userId, productId, amount, price })
         .then((result) => {
           alert('장바구니에 추가되었습니다.');
+        })
+        .catch((result) => {
+
+        })
+    }
+  }
+  async function purchase(name) {
+    const data = confirm(`${name} 상품을 구매하시겠습니까?`);
+    if (data) {
+      const curAmount = `{{result.proAmount}}`;
+      const amount = $('#sell_amount').val();
+      const userId = $('#user_Id').val();
+      const productId = $('#product_Id').val();
+      const price = $('#sum').val();
+      const type = 0;
+      const money = `{{user.money}}`;
+
+      if (money < price) {
+        alert('보유금액이 부족합니다.')
+        return false;
+      }
+      if (curAmount == 0) {
+        alert('보유재고가 부족합니다.')
+        return false;
+      }
+      if (price > money) {
+        alert('상품가격이 보유금액을 초과합니다.')
+        return false;
+      }
+      await axios.post('/purchase', { type, userId, productId, curAmount, amount, price, money })
+        .then((result) => {
+          alert(`${name} 을 구매하였습니다.`);
+          location.reload();
         })
         .catch((result) => {
 
@@ -71,6 +105,7 @@
             </a>
           </div>
           <div class="col-lg-6">
+            <input id="user_Id" type="hidden" value="{{user.id}}">
             <input id="product_Id" type="hidden" value="{{result.id}}">
             <h2 class="card-title">{{result.proName}}</h2>
             <p class="card-text">{{result.proContent}}</p>
@@ -80,15 +115,16 @@
             <input type="number" id='sell_amount' max="{{result.proAmount}}" min="1" value="1" onchange="total()">
 
 
-            금액 : <input type="text" id="sum" size="11" disabled value="{{result.proPrice}}">원
+            금액 : <input type="number" id="sum" size="20" disabled value="{{result.proPrice}}">원
 
             </br></br>
-            {% if user.id %}
-            <input type="button" class="btn btn-primary" value="PurChase">
-            <input type="button" class="btn btn-primary" onclick="wishList(`{{user.id}}`)" value="WishList">
-            {% else %}
-            <input type="button" class="btn btn-primary" value="PurChase" disabled>
+            {% if user.admin %}
+            <input type="button" class="btn btn-primary" onclick="purchase(`{{result.proName}}`)" value="PurChase"
+              disabled>
             <input type="button" class="btn btn-primary" onclick="wishList(`{{user.id}}`)" value="WishList" disabled>
+            {% else %}
+            <input type="button" class="btn btn-primary" onclick="purchase(`{{result.proName}}`)" value="PurChase">
+            <input type="button" class="btn btn-primary" onclick="wishList(`{{user.id}}`)" value="WishList">
             {% endif %}
           </div>
         </div>

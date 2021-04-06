@@ -8,6 +8,11 @@ module.exports = class Purchaselist extends Sequelize.Model {
                 allowNull: false,
                 defaultValue: 0,
             },
+            purchaseTotal: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                defaultValue: 0,
+            },
             created_at: {
                 type: Sequelize.DATE,
                 allowNull: true,

@@ -6,14 +6,13 @@
         $('.list-group-item').click(async function () {
             var index = $('.list-group-item').index(this);
             $('.list-group-item').attr('class','list-group-item').css('color','black');
-            axios.get(`/userSidebar/${index}`)
+            await axios.get(`/userSidebar/${index}`)
                 .then((data) => {
                     $('#content_col').empty();
                     $('.list-group-item').eq(index).attr('class','list-group-item active').css('color','white');
                     $('#content_col').append(data.data);
                 })
                 .catch((data) => {
-                    
                 })
 
         })

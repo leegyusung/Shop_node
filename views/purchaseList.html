@@ -1,1 +1,87 @@
-2
+<style>
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .styled-table thead tr {
+        background-color: #003098;
+        color: #ffffff;
+        text-align: left;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 12px 15px;
+    }
+
+    .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
+
+    .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
+
+    .styled-table tbody tr:last-of-type {
+        border-bottom: 2px solid #003098;
+    }
+
+    .styled-table tbody tr.active-row {
+        font-weight: bold;
+        color: #000f98;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+       
+        // for(var i=0; i<10; i++){
+        //   const amount=document.getElementById('pro_amount').innerHTML;
+        //   alert(amount);
+        // }
+        // // $('#total_sum').each(function(index,item){
+        // //    $(this).html(2);
+        // // })
+       
+    
+    })
+</script>
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>PurChaseName</th>
+            <th>PurChasePrice</th>
+            <th>PurChaseAmount</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if userFlag %}
+        {% for item in result %}
+        <input type="hidden" id="user_id" value="{{result.wishUserId}}">
+        <input type="hidden" id="product_id" value="{{result.wishListProductId}}">
+        <tr id="td">
+            <td>{{item.id}}</td>
+            <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
+            <td>{{item.Product.proName}}</td>
+            <td id="pro_price">{{item.Product.proPrice}}</td>
+            <td id="pro_amount">{{item.purchaseAmount}}</td>
+            <td id="total_sum">{{item.purchaseTotal}}</td>
+        </tr>
+        <tr>
+            <td colspan="9"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
+        </tr>
+        {% endfor %}
+        {% elif dataFlag %}
+        <tr class="user_list_tr">
+            <td colspan="8" style="text-align: center;">No Data</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
