@@ -124,9 +124,9 @@
                     });
                 await axios.get(`/userSidebar/0`)
                     .then((data) => {
-                        $('#content_col').empty();
-                        $('#content_col').append(data.data);
-                        location.href='/userSidebar'
+                        // $('#content_col').empty();
+                        // $('#content_col').append(data.data);
+                        location.reload();
                     });
             }
         })

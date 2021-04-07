@@ -121,6 +121,7 @@ router.get('/adminSidebar/:id', isLoggedIn, async (req, res, next) => {
 });
 router.get('/adminSidebar/userlist/:deleteUser', isLoggedIn, async (req, res, next) => {
     const deleteUser = req.params.deleteUser;
+   
     try {
         const result = await User.destroy({
             where: { id: deleteUser }
@@ -132,8 +133,9 @@ router.get('/adminSidebar/userlist/:deleteUser', isLoggedIn, async (req, res, ne
     }
 
 });
-router.get('/sidebar/productlist/:deleteProduct', isLoggedIn, async (req, res, next) => {
+router.get('/adminSidebar/productlist/:deleteProduct', isLoggedIn, async (req, res, next) => {
     const deleteProduct = req.params.deleteProduct;
+    console.log(123123123123);
     try {
         const result = await Product.destroy({
             where: { id: deleteProduct }
