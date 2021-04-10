@@ -23,3 +23,21 @@ body {
     background:grey; 
     color: white; }
 
+    #cur_page{
+      position: relative;
+      display: block;
+      padding: .5rem .75rem;
+      margin-left: -1px;
+      line-height: 1.25;
+      color: #007bff;
+      background-color: #fff;
+    }
+    #on{
+      background-color:gray;
+      color:white;
+    }
+    #off{
+      background-color: #fff;
+      color: #007bff;
+    }
+    
