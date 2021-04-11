@@ -1,56 +1,92 @@
-<style>
-    .styled-table {
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.9em;
-        font-family: sans-serif;
-        min-width: 400px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .styled-table thead tr {
-        background-color: #003098;
-        color: #ffffff;
-        text-align: left;
-    }
-
-    .styled-table th,
-    .styled-table td {
-        padding: 12px 15px;
-    }
-
-    .styled-table tbody tr {
-        border-bottom: 1px solid #dddddd;
-    }
-
-    .styled-table tbody tr:nth-of-type(even) {
-        background-color: #f3f3f3;
-    }
-
-    .styled-table tbody tr:last-of-type {
-        border-bottom: 2px solid #003098;
-    }
-
-    .styled-table tbody tr.active-row {
-        font-weight: bold;
-        color: #000f98;
-    }
-</style>
+<!-- Custom styles for this template -->
+<link href="../css/modern-business.css" rel="stylesheet">
 <script>
     $(document).ready(function () {
-       
-        // for(var i=0; i<10; i++){
-        //   const amount=document.getElementById('pro_amount').innerHTML;
-        //   alert(amount);
-        // }
-        // // $('#total_sum').each(function(index,item){
-        // //    $(this).html(2);
-        // // })
-       
-    
+        paging();
     })
+    async function paging() {
+        const id = `{{user.id}}`;
+        var totalData;
+        var result;
+        await axios.get(`/purchase/${id}/json`)
+            .then((data) => {
+                totalData = data.data.length; // 총 데이터 수
+            })
+        var currentPage = 1;
+        var dataPerPage = 6;    // 한 페이지에 나타낼 데이터 수
+        var pageCount = Math.ceil(totalData / dataPerPage);      // 한 화면에 나타낼 페이지 수
+
+        var totalPage = pageCount;   // 총 페이지 수
+        var pageGroup = Math.ceil(currentPage / pageCount);    // 페이지 그룹
+        // alert("pageGroup : " + pageGroup);
+
+        var last = pageGroup * pageCount;    // 화면에 보여질 마지막 페이지 번호
+        if (last > totalPage)
+            last = totalPage;
+        var first = last - (pageCount - 1);    // 화면에 보여질 첫번째 페이지 번호
+        var next = last + 1;
+        var prev = first - 1;
+
+        console.log('totalpage : ' + totalPage);
+        console.log("last : " + last);
+        console.log("first : " + first);
+        console.log("next : " + next);
+        console.log("prev : " + prev);
+
+        var html = '<ul class="pagination justify-content-center">';
+        if (prev > 0)
+            html += `<li class="page-item"><a href=# id='prev'><</a></li>`;
+        for (var i = first; i <= last; i++) {
+            if (i == 1) {
+                html += ` <li class="page-item"><a class='page-link' id='on'>${i}</a></li>`
+            } else {
+                html += ` <li class="page-item"><a class='page-link' id='off'>${i}</a></li>`
+            }
+
+        }
+        if (last < totalPage)
+            html += `<li class="page-item"><a href=# id='next'>></a></li>`;
+        html += `</ul>`
+        $("#cur_page").append(html);    // 페이지 목록 생성
+
+        var tag = $('div.portfolio-item');
+
+        const page = $(this).text();
+        const index1 = 1 * 6;
+        $('div.portfolio-item').each(function (index, item) {
+            if (index >= index1 - 6 && index < index1) {
+                $(this).attr('id', index);
+            }
+        })
+        $('a.page-link').on('click', async function () {
+            $('a.page-link').attr('id', 'off');
+            $(this).attr('id', 'on');
+            const page = $(this).text();
+            const listArray = new Array();
+            await axios.get(`/purchase/page/${id}/${page}`)
+                .then((data) => {
+                    for (var i = 0; i < data.data.length; i++) {
+                        var html2 = '';
+                        html2 += `<tr id="td">`;
+                        html2 += `<td>${data.data[i].id}</td>`;
+                        html2 += `<td><img src="${data.data[i].Product.proPhoto}" width="150" height="150"></td>`;
+                        html2 += `<td>${data.data[i].Product.proName}</td>`;
+                        html2 += ` <td id="pro_price">${data.data[i].Product.proPrice}</td>`;
+                        html2 += `<td id="pro_amount">${data.data[i].purchaseAmount}</td>`;
+                        html2 += `<td id="total_sum">${data.data[i].purchaseTotal}</td>`;
+                        html2 += ` </tr><tr id="td">`;
+                        html2 += ` <td colspan="9"><label style="color: #000f98;">Created</label>${data.data[i].created_at}</td></tr>`;
+                        listArray.push(html2);
+                    }
+                    console.log(listArray);
+                    $('tr#td').remove();
+                    $('tbody').append(listArray);
+                })
+        })
+
+    };
 </script>
-<table class="styled-table">
+<table class="styled-table" width="820">
     <thead>
         <tr>
             <th>ID</th>
@@ -64,19 +100,17 @@
     <tbody>
         {% if userFlag %}
         {% for item in result %}
-        <input type="hidden" id="user_id" value="{{result.wishUserId}}">
-        <input type="hidden" id="product_id" value="{{result.wishListProductId}}">
-        <tr id="td">
-            <td>{{item.id}}</td>
-            <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
-            <td>{{item.Product.proName}}</td>
-            <td id="pro_price">{{item.Product.proPrice}}</td>
-            <td id="pro_amount">{{item.purchaseAmount}}</td>
-            <td id="total_sum">{{item.purchaseTotal}}</td>
-        </tr>
-        <tr>
-            <td colspan="9"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
-        </tr>
+            <tr id="td">
+                <td>{{item.id}}</td>
+                <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
+                <td>{{item.Product.proName}}</td>
+                <td id="pro_price">{{item.Product.proPrice}}</td>
+                <td id="pro_amount">{{item.purchaseAmount}}</td>
+                <td id="total_sum">{{item.purchaseTotal}}</td>
+            </tr>
+            <tr id="td">
+                <td colspan="9"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
+            </tr>
         {% endfor %}
         {% elif dataFlag %}
         <tr class="user_list_tr">
@@ -85,3 +119,4 @@
         {% endif %}
     </tbody>
 </table>
+<div id="cur_page"></div>

@@ -51,15 +51,15 @@
       const type = 0;
       const money = `{{user.money}}`;
 
-      if (money < price) {
+      if (parseInt(money) < parseInt(price)) {
         alert('보유금액이 부족합니다.')
         return false;
       }
-      if (curAmount == 0) {
+      if (parseInt(curAmount) == 0) {
         alert('보유재고가 부족합니다.')
         return false;
       }
-      if (price > money) {
+      if (parseInt(price) > parseInt(money)) {
         alert('상품가격이 보유금액을 초과합니다.')
         return false;
       }
@@ -73,14 +73,6 @@
         })
     }
   }
-//   function getFormatDate(date){
-//     var year = date.getFullYear();              //yyyy
-//     var month = (1 + date.getMonth());          //M
-//     month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
-//     var day = date.getDate();                   //d
-//     day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
-//     return  year + '-' + month + '-' + day;       //'-' 추가하여 yyyy-mm-dd 형태 생성 가능
-// }
 </script>
 
 <body>

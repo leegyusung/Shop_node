@@ -1,54 +1,17 @@
-<style>
-    .styled-table {
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.9em;
-        font-family: sans-serif;
-        min-width: 400px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .styled-table thead tr {
-        background-color: #003098;
-        color: #ffffff;
-        text-align: left;
-    }
-
-    .styled-table th,
-    .styled-table td {
-        padding: 12px 15px;
-    }
-
-    .styled-table tbody tr {
-        border-bottom: 1px solid #dddddd;
-    }
-
-    .styled-table tbody tr:nth-of-type(even) {
-        background-color: #f3f3f3;
-    }
-
-    .styled-table tbody tr:last-of-type {
-        border-bottom: 2px solid #003098;
-    }
-
-    .styled-table tbody tr.active-row {
-        font-weight: bold;
-        color: #000f98;
-    }
-</style>
+<!-- Custom styles for this template -->
+<link href="../css/modern-business.css" rel="stylesheet">
 <script>
     $(document).ready(function () {
-        // const price = $('#pro_price').html();
-        // const amount = $('#pro_amount').val();
-        // const total = price * amount;
-        // $('#total_sum').html(total);
-
         $('#pro_amount').change(() => {
             const price = $('#pro_price').html();
             const amount = $('#pro_amount').val();
             const total = price * amount;
             $('#total_sum').html(total);
-        })
+        });
+        btn();
+        paging();
+    })
+    async function btn() { 
         $('.delete_btn').click(async function () {
             const tr = $(this).parent().parent();
             const td = tr.children();
@@ -103,17 +66,15 @@
                 const price = $('#total_sum').text();
                 const type = 1;
                 const money = `{{user.money}}`;
-                //alert(curAmount + ' ' + amount + ' ' + userId + ' ' + productId + ' ' + price + ' ' + money);
-                //84 1   3 3
-                if (money < price) {
+                if (parseInt(money) < parseInt(price)) {
                     alert('보유금액이 부족합니다.')
                     return false;
                 }
-                if (curAmount == 0) {
+                if (parseInt(curAmount) == 0) {
                     alert('보유재고가 부족합니다.')
                     return false;
                 }
-                if (price > money) {
+                if (parseInt(price) > parseInt(money)) {
                     alert('상품가격이 보유금액을 초과합니다.')
                     return false;
                 }
@@ -124,15 +85,106 @@
                     });
                 await axios.get(`/userSidebar/0`)
                     .then((data) => {
-                        // $('#content_col').empty();
-                        // $('#content_col').append(data.data);
                         location.reload();
                     });
             }
         })
-    })
+    }
+    async function paging() {
+        const id = `{{user.id}}`;
+        var totalData;
+        var result;
+        await axios.get(`/wishlist/${id}/json`)
+            .then((data) => {
+                totalData = data.data.length; // 총 데이터 수
+            })
+        var currentPage = 1;
+        var dataPerPage = 6;    // 한 페이지에 나타낼 데이터 수
+        var pageCount = Math.ceil(totalData / dataPerPage);      // 한 화면에 나타낼 페이지 수
+
+        var totalPage = pageCount;   // 총 페이지 수
+        var pageGroup = Math.ceil(currentPage / pageCount);    // 페이지 그룹
+        // alert("pageGroup : " + pageGroup);
+
+        var last = pageGroup * pageCount;    // 화면에 보여질 마지막 페이지 번호
+        if (last > totalPage)
+            last = totalPage;
+        var first = last - (pageCount - 1);    // 화면에 보여질 첫번째 페이지 번호
+        var next = last + 1;
+        var prev = first - 1;
+
+        console.log('totalpage : ' + totalPage);
+        console.log("last : " + last);
+        console.log("first : " + first);
+        console.log("next : " + next);
+        console.log("prev : " + prev);
+
+        var html = '<ul class="pagination justify-content-center">';
+        if (prev > 0)
+            html += `<li class="page-item"><a href=# id='prev'><</a></li>`;
+        for (var i = first; i <= last; i++) {
+            if (i == 1) {
+                html += ` <li class="page-item"><a class='page-link' id='on'>${i}</a></li>`
+            } else {
+                html += ` <li class="page-item"><a class='page-link' id='off'>${i}</a></li>`
+            }
+
+        }
+        if (last < totalPage)
+            html += `<li class="page-item"><a href=# id='next'>></a></li>`;
+        html += `</ul>`
+        $("#cur_page").append(html);    // 페이지 목록 생성
+
+        var tag = $('div.portfolio-item');
+
+        const page = $(this).text();
+        const index1 = 1 * 6;
+        $('div.portfolio-item').each(function (index, item) {
+            if (index >= index1 - 6 && index < index1) {
+                $(this).attr('id', index);
+            }
+        })
+        $('a.page-link').on('click', async function () {
+            $('a.page-link').attr('id', 'off');
+            $(this).attr('id', 'on');
+            const page = $(this).text();
+            const listArray = new Array();
+            await axios.get(`/wishlist/page/${id}/${page}`)
+                .then((data) => {
+                    for (var i = 0; i < data.data.length; i++) {
+                        var html2 = '';
+
+                        html2 += `<tr id="td">`;
+                        html2 += `<td>${data.data[i].id}</td>`;
+                        html2 += `<td><img src="${data.data[i].Product.proPhoto}" width="150" height="150"></td>`;
+                        html2 += `<td>${data.data[i].Product.proName}</td>`;
+                        html2 += `<td id="pro_price">${data.data[i].Product.proPrice}</td>`;
+                        html2 += `<td><input type="number" id="pro_amount" value="${data.data[i].wishListAmount}" max="${data.data[i].Product.proAmount}"
+                    min="1"></td>`;
+                        html2 += `<td id="total_sum">${data.data[i].wishListTotal}</td>`;
+                        html2 += `<td><input type="button" class="update_btn" value="변경"></td>`;
+                        html2 += `<td><input type="button" class="delete_btn" value="삭제"></td>`;
+                        html2 += `<td><input type="button" class="purchase_btn" value="구매"></td>`;
+                        html2 += `</tr>`;
+                        html2 += `<tr id="td">`;
+                        html2 += `<td colspan="9"><label style="color: #000f98;">Created</label>${data.data[i].created_at}</td>`;
+                        html2 += `</tr>`;
+                        html2 += `<input type="hidden" id="wish_id" value="${data.data[i].id}">`;
+                        html2 += `<input type="hidden" id="user_id" value="${data.data[i].wishUserId}">`;
+                        html2 += `<input type="hidden" id="product_id" value="${data.data[i].wishListProductId}">`;
+                        html2 += `<input type="hidden" id="product_amount" value="${data.data[i].Product.proAmount}">`;
+                        listArray.push(html2);
+                    }
+
+                    $('tr#td').remove();
+                    $('input[type="hidden"]').remove();
+                    $('tbody').append(listArray);
+                    btn();
+                })
+        })
+    };
 </script>
-<table class="styled-table">
+<table class="styled-table" width="820">
     <thead>
         <tr>
             <th>ID</th>
@@ -151,19 +203,19 @@
         <input type="hidden" id="user_id" value="{{item.wishUserId}}">
         <input type="hidden" id="product_id" value="{{item.wishListProductId}}">
         <input type="hidden" id="product_amount" value="{{item.Product.proAmount}}">
-        <tr>
+        <tr id="td">
             <td>{{item.id}}</td>
             <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
             <td id="pro_name">{{item.Product.proName}}</td>
             <td id="pro_price">{{item.Product.proPrice}}</td>
             <td><input type="number" id="pro_amount" value="{{item.wishListAmount}}" max="{{item.Product.proAmount}}"
-                    min="1" onchange=""></td>
+                    min="1"></td>
             <td id="total_sum">{{item.wishListTotal}}</td>
             <td><input type="button" class="update_btn" value="변경"></td>
             <td><input type="button" class="delete_btn" value="삭제"></td>
             <td><input type="button" class="purchase_btn" value="구매"></td>
         </tr>
-        <tr>
+        <tr id="td">
             <td colspan="9"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
         </tr>
         {% endfor %}
@@ -174,3 +226,4 @@
         {% endif %}
     </tbody>
 </table>
+<div id="cur_page"></div>

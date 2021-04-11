@@ -31,31 +31,43 @@ router.get('/userSidebar/:id', isLoggedIn, async (req, res, next) => {
     const Id = req.params.id;
     try {
         if (Id == 0) {
-            const result = await WishList.findAll({
+            const result2 = await WishList.findAll({
                 where: { wishUserId: req.user.id },
                 include: [{
                     model: Product,
                 }],
             });
+            var result = new Array();
+            for (var i = 0; i < 6; i++) {
+                if (result2[i] != undefined) {
+                    result.push(result2[i]);
+                }
+            }
             if (result.length == 0) {
-                res.render('wishlist', {
+                res.render('wishList', {
                     result,
                     dataFlag: 'true'
                 });
             } else {
-                res.render('wishlist', {
+                res.render('wishList', {
                     result,
                     userFlag: 'true'
                 });
             }
         }
         if (Id == 1) {
-            const result = await PurChaseList.findAll({
+            const result2 = await PurChaseList.findAll({
                 where: { purChaseUserId: req.user.id },
                 include: [{
                     model: Product,
                 }],
             });
+            var result = new Array();
+            for (var i = 0; i < 6; i++) {
+                if (result2[i] != undefined) {
+                    result.push(result2[i]);
+                }
+            }
             if (result.length == 0) {
                 res.render('purchaseList', {
                     result,
@@ -68,16 +80,11 @@ router.get('/userSidebar/:id', isLoggedIn, async (req, res, next) => {
                 });
             }
         }
-
-
     } catch (error) {
         console.error(error);
         next(error);
     }
 });
-
-
-
 router.get('/adminSidebar', isLoggedIn, (req, res, next) => {
     res.render('adminSideBar');
 })
@@ -86,7 +93,13 @@ router.get('/adminSidebar/:id', isLoggedIn, async (req, res, next) => {
     const Id = req.params.id;
     try {
         if (Id == 0) {
-            const result = await User.findAll({});
+            const result2 = await User.findAll({});
+            var result = new Array();
+            for (var i = 0; i < 6; i++) {
+                if (result2[i] != undefined) {
+                    result.push(result2[i]);
+                }
+            }
             if (result.length == 0) {
                 res.render('userlist', {
                     result,
@@ -119,9 +132,40 @@ router.get('/adminSidebar/:id', isLoggedIn, async (req, res, next) => {
         next(error);
     }
 });
+router.get('/adminSidebar/page/:id/:page', async (req, res, next) => {
+    const page = req.params.page;
+    console.log(req.params.id);
+    try {
+        if (req.params.id == 0) {
+            const result2 = await User.findAll({
+            })
+            var result = new Array();
+            for (var i = 0; i < result2.length; i++) {
+                if (i >= page * 6 - 6 && i < page * 6) {
+                    result.push(result2[i]);
+                }
+            }
+        }
+        if (req.params.id == 1) {
+            const result2 = await Product.findAll({
+            })
+            var result = new Array();
+            for (var i = 0; i < result2.length; i++) {
+                if (i >= page * 6 - 6 && i < page * 6) {
+                    result.push(result2[i]);
+                }
+            }
+        }
+        console.log(result);
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
+
 router.get('/adminSidebar/userlist/:deleteUser', isLoggedIn, async (req, res, next) => {
     const deleteUser = req.params.deleteUser;
-   
     try {
         const result = await User.destroy({
             where: { id: deleteUser }
@@ -135,7 +179,6 @@ router.get('/adminSidebar/userlist/:deleteUser', isLoggedIn, async (req, res, ne
 });
 router.get('/adminSidebar/productlist/:deleteProduct', isLoggedIn, async (req, res, next) => {
     const deleteProduct = req.params.deleteProduct;
-    console.log(123123123123);
     try {
         const result = await Product.destroy({
             where: { id: deleteProduct }
@@ -162,6 +205,26 @@ router.get('/userSidebar/wishlist/:deleteWishList', isLoggedIn, async (req, res,
 
 });
 
+router.get('/adminSidebar/:id/json1', async (req, res, next) => {
+    try {
+        const result = await User.findAll({
+        })
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
+router.get('/adminSidebar/:id/json2', async (req, res, next) => {
+    try {
+        const result = await Product.findAll({
+        })
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
 
 router.get('/error', (req, res, next) => {
     res.render('error');

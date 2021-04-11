@@ -1,44 +1,11 @@
-<style>
-    .styled-table {
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.9em;
-        font-family: sans-serif;
-        min-width: 400px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .styled-table thead tr {
-        background-color: #003098;
-        color: #ffffff;
-        text-align: left;
-    }
-
-    .styled-table th,
-    .styled-table td {
-        padding: 12px 15px;
-    }
-
-    .styled-table tbody tr {
-        border-bottom: 1px solid #dddddd;
-    }
-
-    .styled-table tbody tr:nth-of-type(even) {
-        background-color: #f3f3f3;
-    }
-
-    .styled-table tbody tr:last-of-type {
-        border-bottom: 2px solid #003098;
-    }
-
-    .styled-table tbody tr.active-row {
-        font-weight: bold;
-        color: #000f98;
-    }
-</style>
+<!-- Custom styles for this template -->
+<link href="../css/modern-business.css" rel="stylesheet">
 <script>
     $(document).ready(function () {
-        // const index=$('.styled-table tbody tr').length;
+        btn();
+        paging();
+    })
+    async function btn() {
         $('.delete_btn').click(async function () {
             const tr = $(this).parent().parent();
             const td = tr.children();
@@ -57,7 +24,82 @@
                     });
             }
         })
-    })
+    };
+    async function paging() {
+        const id = `{{user.id}}`;
+        var totalData;
+        var result;
+        await axios.get(`/adminSidebar/${id}/json2`)
+            .then((data) => {
+                totalData = data.data.length; // 총 데이터 수
+            })
+        var currentPage = 1;
+        var dataPerPage = 6;    // 한 페이지에 나타낼 데이터 수
+        var pageCount = Math.ceil(totalData / dataPerPage);      // 한 화면에 나타낼 페이지 수
+
+        var totalPage = pageCount;   // 총 페이지 수
+        var pageGroup = Math.ceil(currentPage / pageCount);    // 페이지 그룹
+
+        var last = pageGroup * pageCount;    // 화면에 보여질 마지막 페이지 번호
+        if (last > totalPage)
+            last = totalPage;
+        var first = last - (pageCount - 1);    // 화면에 보여질 첫번째 페이지 번호
+        var next = last + 1;
+        var prev = first - 1;
+
+
+
+        var html = '<ul class="pagination justify-content-center">';
+        if (prev > 0)
+            html += `<li class="page-item"><a href=# id='prev'><</a></li>`;
+        for (var i = first; i <= last; i++) {
+            if (i == 1) {
+                html += ` <li class="page-item"><a class='page-link' id='on'>${i}</a></li>`
+            } else {
+                html += ` <li class="page-item"><a class='page-link' id='off'>${i}</a></li>`
+            }
+
+        }
+        if (last < totalPage)
+            html += `<li class="page-item"><a href=# id='next'>></a></li>`;
+        html += `</ul>`
+        $("#cur_page").append(html);    // 페이지 목록 생성
+
+        var tag = $('div.portfolio-item');
+
+        const page = $(this).text();
+        const index1 = 1 * 6;
+        $('div.portfolio-item').each(function (index, item) {
+            if (index >= index1 - 6 && index < index1) {
+                $(this).attr('id', index);
+            }
+        })
+        $('a.page-link').on('click', async function () {
+            $('a.page-link').attr('id', 'off');
+            $(this).attr('id', 'on');
+            const page = $(this).text();
+            const listArray = new Array();
+            await axios.get(`/adminSidebar/page/1/${page}`)
+                .then((data) => {
+                    for (var i = 0; i < data.data.length; i++) {
+                        var html2 = '';
+                        html2 += `<tr id="td">`;
+                        html2 += `<td>${data.data[i].id}</td>`;
+                        html2 += `<td>${data.data[i].proType}</td>`;
+                        html2 += `<td><img src="${data.data[i].proPhoto}" width="180" height="180"></td>`;
+                        html2 += `<td>${data.data[i].proName}</td>`;
+                        html2 += `<td>${data.data[i].proPrice}</td>`;
+                        html2 += `<td>${data.data[i].proAmount}</td>`;
+                        html2 += ` <td>${data.data[i].createdAt}</td>`;
+                        html2 += `<td><input type="button" class="delete_btn" value="삭제"></td>`;
+                        listArray.push(html2);
+                    }
+                    $('tr#td').remove();
+                    $('tbody').append(listArray);
+                    btn();
+                })
+        })
+    };
 </script>
 <table class="styled-table">
     <thead>
@@ -69,13 +111,13 @@
             <th>Price</th>
             <th>Amount</th>
             <th>Created</th>
-            <th>Delete</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
         {% if userFlag %}
         {% for item in result %}
-        <tr>
+        <tr id="td">
             <td>{{item.id}}</td>
             <td>{{item.proType}}</td>
             <td><img src="{{item.proPhoto}}" width="180" height="180"></td>
@@ -83,7 +125,6 @@
             <td>{{item.proPrice}}</td>
             <td>{{item.proAmount}}</td>
             <td>{{item.createdAt}}</td>
-
             <td><input type="button" class="delete_btn" value="삭제"></td>
         </tr>
         {% endfor %}
@@ -94,3 +135,4 @@
         {% endif %}
     </tbody>
 </table>
+<div id="cur_page"></div>

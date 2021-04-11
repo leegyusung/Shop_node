@@ -38,7 +38,6 @@ router.get('/page/:id/:page', async (req, res, next) => {
             }
         }
         res.json(result);
-        // return res.render('productsList', { result, type: type });
     } catch (error) {
         console.error(error);
         next(error);
@@ -53,7 +52,6 @@ router.get('/:id/json', async (req, res, next) => {
             where: { proType: type }
         })
         res.json(result);
-        //return res.render('productsList', { result, type: type });
     } catch (error) {
         console.error(error);
         next(error);
