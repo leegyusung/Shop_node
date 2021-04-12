@@ -110,7 +110,7 @@
             금액 : <input type="number" id="sum" size="20" disabled value="{{result.proPrice}}">원
 
             </br></br>
-            {% if user.admin %}
+            {% if user.admin or not user %}
             <input type="button" class="btn btn-primary" onclick="purchase(`{{result.proName}}`)" value="PurChase"
               disabled>
             <input type="button" class="btn btn-primary" onclick="wishList(`{{user.id}}`)" value="WishList" disabled>

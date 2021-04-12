@@ -4,9 +4,19 @@ const Product = require('../models/product');
 const WishList = require('../models/wishlist');
 const PurChaseList = require('../models/purchaselist');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
-const Purchaselist = require('../models/purchaselist');
+
 
 const router = express.Router();
+
+router.get('/', async (req, res, next) => {
+    try {
+        const result = await PurChaseList.findAll({})
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
 
 router.post('/', isLoggedIn, async (req, res, next) => {
     const type = req.body.type;
@@ -61,7 +71,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
 })
 router.get('/:id/json', async (req, res, next) => {
     try {
-        const result = await Purchaselist.findAll({
+        const result = await PurChaseList.findAll({
             where: { purChaseUserId: req.params.id }
         })
         res.json(result);
@@ -90,7 +100,20 @@ router.get('/page/:id/:page', async (req, res, next) => {
         console.error(error);
         next(error);
     }
-})
+});
+router.post('/purPost', async (req, res, next) => {
+    console.log(req.body.purPost);
+    try {
+        const result = await PurChaseList.update({
+            purChasePost: req.body.purPost,
 
+        }, {
+            where: { id: req.body.id }
+        })
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
 
 module.exports = router;

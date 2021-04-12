@@ -17,7 +17,12 @@ module.exports = class Purchaselist extends Sequelize.Model {
                 type: Sequelize.DATE,
                 allowNull: true,
                 defaultValue: Sequelize.NOW,
-            }
+            },
+            purChasePost: {
+                type: Sequelize.FLOAT,
+                allowNull: false,
+                defaultValue: 0,
+            },
         },
             {
                 sequelize,

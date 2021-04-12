@@ -27,7 +27,12 @@ module.exports = class Product extends Sequelize.Model {
             proContent: {
                 type: Sequelize.STRING(400),
                 allowNull: false,
-            }
+            },
+            proPost: {
+                type: Sequelize.FLOAT,
+                allowNull: false,
+                defaultValue: 0,
+            },
         },
             {
                 sequelize,

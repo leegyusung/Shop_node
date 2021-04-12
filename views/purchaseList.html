@@ -3,7 +3,36 @@
 <script>
     $(document).ready(function () {
         paging();
+        proPostClick();
+        getproPost();
     })
+    async function getproPost() {
+        await axios.get('/purchase')
+            .then((data) => {
+                $.each(data.data, function (index, item) {
+                    if ($('tr.purchase_content').find('td.pur_id').text() == item.id) {
+                        const purPost = item.purChasePost;
+                        $('input[type=radio]').each(function (index, item) {
+                            if ($(item).val() == purPost) {
+                                $(item).attr('checked', 'true');
+                            }
+                        })
+                    }
+                })
+            })
+    }
+    function proPostClick() {
+        $('input[type=radio]').on('click', async function () {
+            const purPost = $(this).val();
+            const tr = $(this).parent().parent().parent();
+            const td = tr.children();
+            const id = td.eq(0).text();
+            await axios.post('/purchase/purPost', { purPost, id })
+                .then((data) => {
+                    getproPost();
+                })
+        })
+    }
     async function paging() {
         const id = `{{user.id}}`;
         var totalData;
@@ -26,12 +55,6 @@
         var first = last - (pageCount - 1);    // 화면에 보여질 첫번째 페이지 번호
         var next = last + 1;
         var prev = first - 1;
-
-        console.log('totalpage : ' + totalPage);
-        console.log("last : " + last);
-        console.log("first : " + first);
-        console.log("next : " + next);
-        console.log("prev : " + prev);
 
         var html = '<ul class="pagination justify-content-center">';
         if (prev > 0)
@@ -67,13 +90,38 @@
                 .then((data) => {
                     for (var i = 0; i < data.data.length; i++) {
                         var html2 = '';
-                        html2 += `<tr id="td">`;
-                        html2 += `<td>${data.data[i].id}</td>`;
+                        html2 += `<tr id="td" class="purchase_content">`;
+                        html2 += `<td class="pur_id">${data.data[i].id}</td>`;
                         html2 += `<td><img src="${data.data[i].Product.proPhoto}" width="150" height="150"></td>`;
                         html2 += `<td>${data.data[i].Product.proName}</td>`;
                         html2 += ` <td id="pro_price">${data.data[i].Product.proPrice}</td>`;
                         html2 += `<td id="pro_amount">${data.data[i].purchaseAmount}</td>`;
                         html2 += `<td id="total_sum">${data.data[i].purchaseTotal}</td>`;
+                        html2 += ` <td id="pro_post">
+                <fieldset class="rating">
+                    <input type="radio" id="star5" name="rating" value="5" /><label class="full" for="star5"
+                        title="Awesome - 5 stars"></label>
+                    <input type="radio" id="star4half" name="rating" value="4.5" /><label class="half" for="star4half"
+                        title="Pretty good - 4.5 stars"></label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label class="full" for="star4"
+                        title="Pretty good - 4 stars"></label>
+                    <input type="radio" id="star3half" name="rating" value="3.5" /><label class="half" for="star3half"
+                        title="Meh - 3.5 stars"></label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label class="full" for="star3"
+                        title="Meh - 3 stars"></label>
+                    <input type="radio" id="star2half" name="rating" value="2.5" /><label class="half" for="star2half"
+                        title="Kinda bad - 2.5 stars"></label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label class="full" for="star2"
+                        title="Kinda bad - 2 stars"></label>
+                    <input type="radio" id="star1half" name="rating" value="1.5" /><label class="half" for="star1half"
+                        title="Meh - 1.5 stars"></label>
+                    <input type="radio" id="star1" name="rating" value="1" /><label class="full" for="star1"
+                        title="Sucks big time - 1 star"></label>
+                    <input type="radio" id="starhalf" name="rating" value="0.5" /><label class="half" for="starhalf"
+                        title="Sucks big time - 0.5 stars"></label>
+                    <input type="radio" id="starzero" name="rating" value="0" />
+                </fieldset>
+            </td>`;
                         html2 += ` </tr><tr id="td">`;
                         html2 += ` <td colspan="9"><label style="color: #000f98;">Created</label>${data.data[i].created_at}</td></tr>`;
                         listArray.push(html2);
@@ -81,12 +129,13 @@
                     console.log(listArray);
                     $('tr#td').remove();
                     $('tbody').append(listArray);
+                    getproPost();
                 })
         })
 
     };
 </script>
-<table class="styled-table" width="820">
+<table class="styled-table" width="850">
     <thead>
         <tr>
             <th>ID</th>
@@ -95,22 +144,48 @@
             <th>PurChasePrice</th>
             <th>PurChaseAmount</th>
             <th>Total</th>
+            <th>PurPost</th>
         </tr>
     </thead>
     <tbody>
         {% if userFlag %}
         {% for item in result %}
-            <tr id="td">
-                <td>{{item.id}}</td>
-                <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
-                <td>{{item.Product.proName}}</td>
-                <td id="pro_price">{{item.Product.proPrice}}</td>
-                <td id="pro_amount">{{item.purchaseAmount}}</td>
-                <td id="total_sum">{{item.purchaseTotal}}</td>
-            </tr>
-            <tr id="td">
-                <td colspan="9"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
-            </tr>
+        <tr id="td" class="purchase_content">
+            <td class="pur_id">{{item.id}}</td>
+            <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
+            <td>{{item.Product.proName}}</td>
+            <td id="pro_price">{{item.Product.proPrice}}</td>
+            <td id="pro_amount">{{item.purchaseAmount}}</td>
+            <td id="total_sum">{{item.purchaseTotal}}</td>
+            <td id="pro_post">
+                <fieldset class="rating">
+                    <input type="radio" id="star5" name="rating" value="5" /><label class="full" for="star5"
+                        title="Awesome - 5 stars"></label>
+                    <input type="radio" id="star4half" name="rating" value="4.5" /><label class="half" for="star4half"
+                        title="Pretty good - 4.5 stars"></label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label class="full" for="star4"
+                        title="Pretty good - 4 stars"></label>
+                    <input type="radio" id="star3half" name="rating" value="3.5" /><label class="half" for="star3half"
+                        title="Meh - 3.5 stars"></label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label class="full" for="star3"
+                        title="Meh - 3 stars"></label>
+                    <input type="radio" id="star2half" name="rating" value="2.5" /><label class="half" for="star2half"
+                        title="Kinda bad - 2.5 stars"></label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label class="full" for="star2"
+                        title="Kinda bad - 2 stars"></label>
+                    <input type="radio" id="star1half" name="rating" value="1.5" /><label class="half" for="star1half"
+                        title="Meh - 1.5 stars"></label>
+                    <input type="radio" id="star1" name="rating" value="1" /><label class="full" for="star1"
+                        title="Sucks big time - 1 star"></label>
+                    <input type="radio" id="starhalf" name="rating" value="0.5" /><label class="half" for="starhalf"
+                        title="Sucks big time - 0.5 stars"></label>
+                    <input type="radio" id="starzero" name="rating" value="0" />
+                </fieldset>
+            </td>
+        </tr>
+        <tr id="td">
+            <td colspan="9"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
+        </tr>
         {% endfor %}
         {% elif dataFlag %}
         <tr class="user_list_tr">
