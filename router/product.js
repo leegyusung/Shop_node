@@ -1,7 +1,8 @@
 const express = require('express');
-const User=require('../models/user');
+const User = require('../models/user');
 const Product = require('../models/product');
 const Comment = require('../models/comment');
+const { render } = require('nunjucks');
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router.get('/:id', async (req, res, next) => {
         const commentResult = await Comment.findAll({
             include: [{
                 model: User,
-                attributes:['name']
+                attributes: ['name']
             }],
             where: { productId: id }
         });
@@ -25,7 +26,6 @@ router.get('/:id', async (req, res, next) => {
         next(error);
     }
 });
-
 
 
 module.exports = router;

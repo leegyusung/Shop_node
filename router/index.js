@@ -4,6 +4,7 @@ const Product = require('../models/product');
 const WishList = require('../models/wishlist');
 const PurChaseList = require('../models/purchaselist');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+
 const router = express.Router();
 
 router.use((req, res, next) => {
@@ -13,13 +14,18 @@ router.use((req, res, next) => {
 
 router.get('/', async (req, res, next) => {
     try {
-        const result = await Product.findAll({});
-        res.render('main', { result });
+        const result = await Product.findAll({})
+
+        var proPost = "proPost";
+        result.sort(function (a, b) {
+            return b[proPost] - a[proPost];
+        })
+        const result1 = result.slice(0, 3);
+        res.render('main', { result: result1 });
     } catch (error) {
         console.error(error);
         next(error);
     }
-
 })
 router.get('/update', (req, res, next) => {
     res.render('update');
@@ -29,6 +35,7 @@ router.get('/userSidebar', isLoggedIn, (req, res, next) => {
 })
 router.get('/userSidebar/:id', isLoggedIn, async (req, res, next) => {
     const Id = req.params.id;
+    console.log(Id);
     try {
         if (Id == 0) {
             const result2 = await WishList.findAll({
@@ -80,11 +87,19 @@ router.get('/userSidebar/:id', isLoggedIn, async (req, res, next) => {
                 });
             }
         }
+        if (Id == 2) {
+            console.log(Id);
+            res.render('purChasePost');
+        }
     } catch (error) {
         console.error(error);
         next(error);
     }
 });
+// router.get('/userSidebar/:id/purPost', isLoggedIn,  (req, res, next) => {
+//    res.render('purChasePost');
+// })
+
 router.get('/adminSidebar', isLoggedIn, (req, res, next) => {
     res.render('adminSideBar');
 })

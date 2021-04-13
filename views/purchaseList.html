@@ -9,24 +9,44 @@
     async function getproPost() {
         await axios.get('/purchase')
             .then((data) => {
-                $.each(data.data, function (index, item) {
-                    if ($('tr.purchase_content').find('td.pur_id').text() == item.id) {
-                        const purPost = item.purChasePost;
-                        $('input[type=radio]').each(function (index, item) {
-                            if ($(item).val() == purPost) {
-                                $(item).attr('checked', 'true');
-                            }
-                        })
-                    }
+                $.each(data.data, function (index, item1) {
+                    $('td.pur_id').each(function (index, item2) {
+                        if (item1.id == $(item2).text()) {
+                            const post = item1.purChasePost;
+                            const tr = $(item2).parent();
+                            const td=tr.children().eq(6);
+                            const input=td.children().find('input[type=radio]');
+                            $(input).each(function(){
+                                if($(this).val()==post){
+                                    $(this).attr('checked', 'true');
+                                }
+                            })
+                        }
+                    })
+                    // alert(item.id);
+                    // if ($('tr.purchase_content').find('td.pur_id').text() == item.id) {
+                    //     const purPost = item.purChasePost;
+                    //     alert(purPost);
+                    //     $('input[type=radio]').each(function (index, item) {
+                    //         alert(index);
+                    //         if ($(item).val() == purPost) {
+                    //             $(item).attr('checked', 'true');
+                    //         }
+                    //     })
+                    // }
                 })
             })
     }
     function proPostClick() {
         $('input[type=radio]').on('click', async function () {
             const purPost = $(this).val();
-            const tr = $(this).parent().parent().parent();
-            const td = tr.children();
-            const id = td.eq(0).text();
+            const tr = $(this).parent().parent().parent();;
+            // $(tr).each(function(index,item){
+            //     alert($(item).find('td.pur_id').text());
+            // })
+            const td = tr.children().eq(1).text();
+
+            //const id = td.eq(0).text();
             await axios.post('/purchase/purPost', { purPost, id })
                 .then((data) => {
                     getproPost();
@@ -134,17 +154,20 @@
         })
 
     };
+    async function purPost(){
+        await axios.get('/userSidebar/2')
+        }
 </script>
-<table class="styled-table" width="850">
+<table class="styled-table" width="860">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Product</th>
-            <th>PurChaseName</th>
-            <th>PurChasePrice</th>
-            <th>PurChaseAmount</th>
-            <th>Total</th>
-            <th>PurPost</th>
+            <th>주문번호</th>
+            <th>상품</th>
+            <th>상품이름</th>
+            <th>가격</th>
+            <th>수량</th>
+            <th>총액</th>
+            <th>후기</th>
         </tr>
     </thead>
     <tbody>
@@ -157,7 +180,8 @@
             <td id="pro_price">{{item.Product.proPrice}}</td>
             <td id="pro_amount">{{item.purchaseAmount}}</td>
             <td id="total_sum">{{item.purchaseTotal}}</td>
-            <td id="pro_post">
+            <td><input id="pur_post" type="button" value="후기작성" onclick="purPost()"></td>
+            <!-- <td id='pro_post'>
                 <fieldset class="rating">
                     <input type="radio" id="star5" name="rating" value="5" /><label class="full" for="star5"
                         title="Awesome - 5 stars"></label>
@@ -181,10 +205,10 @@
                         title="Sucks big time - 0.5 stars"></label>
                     <input type="radio" id="starzero" name="rating" value="0" />
                 </fieldset>
-            </td>
+            </td> -->
         </tr>
-        <tr id="td">
-            <td colspan="9"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
+        <tr class="data_td" id="td" style="text-align: left;">
+            <td colspan="7"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
         </tr>
         {% endfor %}
         {% elif dataFlag %}

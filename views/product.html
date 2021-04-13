@@ -4,7 +4,19 @@
 <script>
   window.onload = function () {
     getComment();
+    getPost();
   }
+  function getPost() {
+    const proPost = $('input#proPost').val();
+    $('input[type=radio]').each(function () {
+      $(this).attr('readonly', 'true');
+      $(this).attr("disabled",'true');
+      if ($(this).val() == proPost) {
+        $(this).attr('checked', 'true');
+      }
+    })
+  }
+
   function total() {
     const price = $('#sell_price').val();
     const total = price * $('#sell_amount').val();
@@ -101,14 +113,41 @@
             <input id="product_Id" type="hidden" value="{{result.id}}">
             <h2 class="card-title">{{result.proName}}</h2>
             <p class="card-text">{{result.proContent}}</p>
-            <p><b>Amount</b> {{result.proAmount}} 개</p>
-            <p><b>Price</b> {{result.proPrice}} 원</p>
-            수량 : <input type=hidden id="sell_price" value="{{result.proPrice}}">
+            <p><b>재고</b> {{result.proAmount}} 개</p>
+            <p><b>가격</b> {{result.proPrice}} 원</p>
+            <b>수량 :</b><input type=hidden id="sell_price" value="{{result.proPrice}}">
             <input type="number" id='sell_amount' max="{{result.proAmount}}" min="1" value="1" onchange="total()">
 
 
-            금액 : <input type="number" id="sum" size="20" disabled value="{{result.proPrice}}">원
+            <b>금액 : </b><input type="number" id="sum" size="20" disabled value="{{result.proPrice}}"> 원
 
+            </br></br>
+            <p><b>평점</b></p>
+            <fieldset class="rating">
+              <input id="proPost" type="hidden" value="{{result.proPost}}">
+              <input type="radio" id="star5" name="rating" value="5" readonly/><label class="full" for="star5"
+                title="Awesome - 5 stars"></label>
+              <input type="radio" id="star4half" name="rating" value="4.5" /><label class="half" for="star4half"
+                title="Pretty good - 4.5 stars"></label>
+              <input type="radio" id="star4" name="rating" value="4" /><label class="full" for="star4"
+                title="Pretty good - 4 stars"></label>
+              <input type="radio" id="star3half" name="rating" value="3.5" /><label class="half" for="star3half"
+                title="Meh - 3.5 stars"></label>
+              <input type="radio" id="star3" name="rating" value="3"/><label class="full" for="star3"
+                title="Meh - 3 stars"></label>
+              <input type="radio" id="star2half" name="rating" value="2.5" /><label class="half" for="star2half"
+                title="Kinda bad - 2.5 stars"></label>
+              <input type="radio" id="star2" name="rating" value="2" /><label class="full" for="star2"
+                title="Kinda bad - 2 stars"></label>
+              <input type="radio" id="star1half" name="rating" value="1.5" /><label class="half" for="star1half"
+                title="Meh - 1.5 stars"></label>
+              <input type="radio" id="star1" name="rating" value="1" /><label class="full" for="star1"
+                title="Sucks big time - 1 star"></label>
+              <input type="radio" id="starhalf" name="rating" value="0.5" /><label class="half" for="starhalf"
+                title="Sucks big time - 0.5 stars"></label>
+              <input type="radio" id="starzero" name="rating" value="0" />
+            </fieldset>
+            </p>
             </br></br>
             {% if user.admin or not user %}
             <input type="button" class="btn btn-primary" onclick="purchase(`{{result.proName}}`)" value="PurChase"

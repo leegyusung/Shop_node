@@ -84,6 +84,7 @@ body {
   td{
     text-align: center;
   }
+  
   fieldset, label { margin: 0; padding: 0; }
 body{ margin: 20px; }
 h1 { font-size: 1.5em; margin: 10px; }
@@ -123,4 +124,18 @@ h1 { font-size: 1.5em; margin: 10px; }
 .rating > input:checked + label:hover, /* hover current star when changing rating */
 .rating > input:checked ~ label:hover,
 .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
-.rating > input:checked ~ label:hover ~ label { color: #FFED85;  } 
+.rating > input:checked ~ label:hover ~ label { color: #FFED85;  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
