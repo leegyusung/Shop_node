@@ -142,6 +142,25 @@ router.get('/adminSidebar/:id', isLoggedIn, async (req, res, next) => {
                 });
             }
         }
+        if (Id == 2) {
+            const result = await PurChaseList.findAll({
+                include: [{
+                    all: true
+                }],
+            });
+            if (result.length == 0) {
+                res.render('purchaseManage', {
+                    result,
+                    dataFlag: 'true'
+                });
+            }
+            else {
+                res.render('purchaseManage', {
+                    result,
+                    userFlag: 'true'
+                });
+            }
+        }
     } catch (error) {
         console.error(error);
         next(error);

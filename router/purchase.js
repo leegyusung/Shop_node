@@ -68,7 +68,32 @@ router.post('/', isLoggedIn, async (req, res, next) => {
         console.error(error);
         next(error);
     }
+});
+router.post('/purChaseStatus', async (req, res, next) => {
+    try {
+        const result = await PurChaseList.update({
+            purChaseStatus: req.body.purStatus,
+        }, {
+            where: { id: req.body.purId }
+        })
+        console.log(result);
+        res.render('purchaseManage', { result });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
+router.get('/json', async (req, res, next) => {
+    try {
+        const result = await PurChaseList.findAll({
+        })
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
 })
+
 router.get('/:id/json', async (req, res, next) => {
     try {
         const result = await PurChaseList.findAll({
@@ -80,6 +105,27 @@ router.get('/:id/json', async (req, res, next) => {
         next(error);
     }
 })
+router.get('/page/:page', async (req, res, next) => {
+    const page = req.params.page;
+    try {
+        const result2 = await PurChaseList.findAll({
+            include: [{
+                all: true,
+            }],
+        })
+        var result = new Array();
+        for (var i = 0; i < result2.length; i++) {
+            if (i >= page * 6 - 6 && i < page * 6) {
+                result.push(result2[i]);
+            }
+        }
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
+
 router.get('/page/:id/:page', async (req, res, next) => {
     const page = req.params.page;
     try {

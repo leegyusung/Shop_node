@@ -1,0 +1,162 @@
+<!-- Custom styles for this template -->
+<link href="../css/modern-business.css" rel="stylesheet">
+<script>
+    $(document).ready(function () {
+        getStatus();
+        paging();
+        setStatus();
+
+    })
+    function getStatus() {
+        $('tr.purchase_content #pro_status_hidden').each(function () {
+            const val = $(this).val();
+            const select = $(this).parent().children().eq(8).children();
+            $(select).find('option').each(function () {
+                if ($(this).val() == val) {
+                    $(this).attr('selected', 'true');
+                }
+            })
+        })
+
+    }
+    function setStatus() {
+        $('tr.purchase_content #status').on('change', async function () {
+            const purStatus = $(this).val();
+            const purId = $(this).parent().parent().children().eq(1).text();
+            await axios.post('/purchase/purChaseStatus', { purStatus, purId })
+                .then((data) => {
+                    alert('상품의 상태가 갱신되었습니다.');
+                })
+            await axios.get('/purchase');
+            getStatus()
+        })
+    }
+    async function paging() {
+        var totalData;
+        var result;
+        await axios.get(`/purchase/json`)
+            .then((data) => {
+                totalData = data.data.length; // 총 데이터 수
+            })
+        var currentPage = 1;
+        var dataPerPage = 6;    // 한 페이지에 나타낼 데이터 수
+        var pageCount = Math.ceil(totalData / dataPerPage);      // 한 화면에 나타낼 페이지 수
+
+        var totalPage = pageCount;   // 총 페이지 수
+        var pageGroup = Math.ceil(currentPage / pageCount);    // 페이지 그룹
+        // alert("pageGroup : " + pageGroup);
+
+        var last = pageGroup * pageCount;    // 화면에 보여질 마지막 페이지 번호
+        if (last > totalPage)
+            last = totalPage;
+        var first = last - (pageCount - 1);    // 화면에 보여질 첫번째 페이지 번호
+        var next = last + 1;
+        var prev = first - 1;
+
+        var html = '<ul class="pagination justify-content-center">';
+        if (prev > 0)
+            html += `<li class="page-item"><a href=# id='prev'><</a></li>`;
+        for (var i = first; i <= last; i++) {
+            if (i == 1) {
+                html += ` <li class="page-item"><a class='page-link' id='on'>${i}</a></li>`
+            } else {
+                html += ` <li class="page-item"><a class='page-link' id='off'>${i}</a></li>`
+            }
+
+        }
+        if (last < totalPage)
+            html += `<li class="page-item"><a href=# id='next'>></a></li>`;
+        html += `</ul>`
+        $("#cur_page").append(html);    // 페이지 목록 생성
+
+        var tag = $('div.portfolio-item');
+
+        const page = $(this).text();
+        const index1 = 1 * 6;
+        $('div.portfolio-item').each(function (index, item) {
+            if (index >= index1 - 6 && index < index1) {
+                $(this).attr('id', index);
+            }
+        })
+        $('a.page-link').on('click', async function () {
+            $('a.page-link').attr('id', 'off');
+            $(this).attr('id', 'on');
+            const page = $(this).text();
+            const listArray = new Array();
+            await axios.get(`/purchase/page/${page}`)
+                .then((data) => {
+                    for (var i = 0; i < data.data.length; i++) {
+                        var html2 = '';
+                        html2 += `<tr id="td" class="purchase_content">`;
+                        html2 += ` <input type="hidden" id="pro_status_hidden" value="${data.data[i].purChaseStatus}" />`
+                        html2 += `<td class="pur_id">${data.data[i].id}</td>`;
+                        html2 += ` <td>${data.data[i].User.name}</td>`
+                        html2 += `<td><img src="${data.data[i].Product.proPhoto}" width="150" height="150"></td>`;
+                        html2 += `<td>${data.data[i].Product.proName}</td>`;
+                        html2 += `<td id="pro_price">${data.data[i].Product.proPrice}</td>`;
+                        html2 += `<td id="pro_amount">${data.data[i].purchaseAmount}</td>`;
+                        html2 += `<td id="total_sum">${data.data[i].purchaseTotal}</td>`;
+                        html2 += `<td id="pro_status"><select id="status">
+                    <option value="0">상품준비중</option>
+                    <option value="1">배송중</option>
+                    <option value="2">배송완료</option>
+                </select></td>`;
+                        html2 += `</tr><tr id="td">`;
+                        html2 += ` <td colspan="9"><label style="color: #000f98;">Created</label>${data.data[i].created_at}</td></tr>`;
+                        listArray.push(html2);
+                    }
+                    console.log(listArray);
+                    $('tr#td').remove();
+                    $('tbody').append(listArray);
+                    getStatus();
+                })
+        })
+
+    };
+</script>
+<table class="styled-table" width="860">
+    <thead>
+        <tr>
+            <th>주문번호</th>
+            <th>주문자</th>
+            <th>상품</th>
+            <th>상품이름</th>
+            <th>가격</th>
+            <th>수량</th>
+            <th>총액</th>
+            <th>상태</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if userFlag %}
+        {% for item in result %}
+        <tr id="td" class="purchase_content">
+            <input type="hidden" id="pro_status_hidden" value="{{item.purChaseStatus}}" />
+            <td class="pur_id">{{item.id}}</td>
+            <td>{{item.User.name}}</td>
+            <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
+            <td>{{item.Product.proName}}</td>
+            <td id="pro_price">{{item.Product.proPrice}}</td>
+            <td id="pro_amount">{{item.purchaseAmount}}</td>
+            <td id="total_sum">{{item.purchaseTotal}}</td>
+            <td id="pro_status">
+                <select id="status">
+                    <option value="0">상품준비중</option>
+                    <option value="1">배송중</option>
+                    <option value="2">배송완료</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="data_td" id="td" style="text-align: left;">
+            <td colspan="8"><label style="color: #000f98;">Created</label> {{item.created_at}}</td>
+        </tr>
+
+        {% endfor %}
+        {% elif dataFlag %}
+        <tr class="user_list_tr">
+            <td colspan="8" style="text-align: center;">No Data</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+<div id="cur_page"></div>

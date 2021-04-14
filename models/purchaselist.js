@@ -23,6 +23,11 @@ module.exports = class Purchaselist extends Sequelize.Model {
                 allowNull: false,
                 defaultValue: 0,
             },
+            purChaseStatus: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                defaultValue: 0,
+            },
         },
             {
                 sequelize,

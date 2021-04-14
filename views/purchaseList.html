@@ -5,7 +5,21 @@
         paging();
         proPostClick();
         getproPost();
+        getproStatus();
     })
+    function getproStatus() {
+        $('td#pro_status').each(function () {
+            if ($(this).text() == '0') {
+                $(this).text('상품준비중').css('color', 'blue');
+            }
+            else if ($(this).text() == '1') {
+                $(this).text('배송중').css('color', 'red');
+            }
+            else if ($(this).text() == '2') {
+                $(this).text('배송완료').css('color', 'gray');
+            }
+        })
+    }
     async function getproPost() {
         await axios.get('/purchase')
             .then((data) => {
@@ -14,10 +28,10 @@
                         if (item1.id == $(item2).text()) {
                             const post = item1.purChasePost;
                             const tr = $(item2).parent();
-                            const td=tr.children().eq(6);
-                            const input=td.children().find('input[type=radio]');
-                            $(input).each(function(){
-                                if($(this).val()==post){
+                            const td = tr.children().eq(6);
+                            const input = td.children().find('input[type=radio]');
+                            $(input).each(function () {
+                                if ($(this).val() == post) {
                                     $(this).attr('checked', 'true');
                                 }
                             })
@@ -117,46 +131,22 @@
                         html2 += ` <td id="pro_price">${data.data[i].Product.proPrice}</td>`;
                         html2 += `<td id="pro_amount">${data.data[i].purchaseAmount}</td>`;
                         html2 += `<td id="total_sum">${data.data[i].purchaseTotal}</td>`;
-                        html2 += ` <td id="pro_post">
-                <fieldset class="rating">
-                    <input type="radio" id="star5" name="rating" value="5" /><label class="full" for="star5"
-                        title="Awesome - 5 stars"></label>
-                    <input type="radio" id="star4half" name="rating" value="4.5" /><label class="half" for="star4half"
-                        title="Pretty good - 4.5 stars"></label>
-                    <input type="radio" id="star4" name="rating" value="4" /><label class="full" for="star4"
-                        title="Pretty good - 4 stars"></label>
-                    <input type="radio" id="star3half" name="rating" value="3.5" /><label class="half" for="star3half"
-                        title="Meh - 3.5 stars"></label>
-                    <input type="radio" id="star3" name="rating" value="3" /><label class="full" for="star3"
-                        title="Meh - 3 stars"></label>
-                    <input type="radio" id="star2half" name="rating" value="2.5" /><label class="half" for="star2half"
-                        title="Kinda bad - 2.5 stars"></label>
-                    <input type="radio" id="star2" name="rating" value="2" /><label class="full" for="star2"
-                        title="Kinda bad - 2 stars"></label>
-                    <input type="radio" id="star1half" name="rating" value="1.5" /><label class="half" for="star1half"
-                        title="Meh - 1.5 stars"></label>
-                    <input type="radio" id="star1" name="rating" value="1" /><label class="full" for="star1"
-                        title="Sucks big time - 1 star"></label>
-                    <input type="radio" id="starhalf" name="rating" value="0.5" /><label class="half" for="starhalf"
-                        title="Sucks big time - 0.5 stars"></label>
-                    <input type="radio" id="starzero" name="rating" value="0" />
-                </fieldset>
-            </td>`;
+                        html2 += `<td id="pro_status">${data.data[i].purChaseStatus}</td>`
                         html2 += ` </tr><tr id="td">`;
                         html2 += ` <td colspan="9"><label style="color: #000f98;">Created</label>${data.data[i].created_at}</td></tr>`;
                         listArray.push(html2);
                     }
-                    console.log(listArray);
                     $('tr#td').remove();
                     $('tbody').append(listArray);
-                    getproPost();
+                   // getproPost();
+                    getproStatus();
                 })
         })
 
     };
-    async function purPost(){
+    async function purPost() {
         await axios.get('/userSidebar/2')
-        }
+    }
 </script>
 <table class="styled-table" width="860">
     <thead>
@@ -167,7 +157,7 @@
             <th>가격</th>
             <th>수량</th>
             <th>총액</th>
-            <th>후기</th>
+            <th>상태</th>
         </tr>
     </thead>
     <tbody>
@@ -180,7 +170,7 @@
             <td id="pro_price">{{item.Product.proPrice}}</td>
             <td id="pro_amount">{{item.purchaseAmount}}</td>
             <td id="total_sum">{{item.purchaseTotal}}</td>
-            <td><input id="pur_post" type="button" value="후기작성" onclick="purPost()"></td>
+            <td id="pro_status">{{item.purChaseStatus}}</td>
             <!-- <td id='pro_post'>
                 <fieldset class="rating">
                     <input type="radio" id="star5" name="rating" value="5" /><label class="full" for="star5"
