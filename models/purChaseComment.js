@@ -1,14 +1,23 @@
 const Sequelize = require('sequelize');
 
-module.exports = class Comment extends Sequelize.Model {
+module.exports = class PurChaseComment extends Sequelize.Model {
     static init(sequelize) {
         return super.init({
             productId: {
                 type: Sequelize.STRING(100),
                 allowNull: false,
             },
-            comment: {
-                type: Sequelize.STRING(300),
+            userId: {
+                type: Sequelize.STRING(100),
+                allowNull: false,
+            },
+            purChaseCommentPost: {
+                type: Sequelize.FLOAT,
+                allowNull: false,
+                defaultValue: 0,
+            },
+            purChaseComment: {
+                type: Sequelize.STRING(100),
                 allowNull: false,
             },
             created_at: {
@@ -19,14 +28,14 @@ module.exports = class Comment extends Sequelize.Model {
         }, {
             sequelize,
             timestamps: false,
-            modelName: 'Comment',
-            tableName: 'comments',
+            modelName: 'PurChaseComment',
+            tableName: 'purChaseComments',
             paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
         });
     }
     static associate(db) {
-        db.Comment.belongsTo(db.User, { foreignKey: 'commenter', targetKey: 'id' });
+
     }
 };
