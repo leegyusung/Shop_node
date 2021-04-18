@@ -3,6 +3,10 @@ const Sequelize = require('sequelize');
 module.exports = class PurChaseComment extends Sequelize.Model {
     static init(sequelize) {
         return super.init({
+            purChaseId: {
+                type: Sequelize.STRING(100),
+                allowNull: false,
+            },
             productId: {
                 type: Sequelize.STRING(100),
                 allowNull: false,

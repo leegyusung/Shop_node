@@ -2,13 +2,10 @@
 <link href="../css/modern-business.css" rel="stylesheet">
 <script>
     $(document).ready(function () {
+        getPurPost();
         paging();
-        proPostClick();
-        getproPost();
         getproStatus();
         purPostPopup();
-        // removePostPopup();
-        // successPostPopup()
     })
     function getproStatus() {
         $('td#pro_status').each(function () {
@@ -21,42 +18,6 @@
             else if ($(this).text() == '2') {
                 $(this).text('배송완료').css('color', 'gray');
             }
-        })
-    }
-    async function getproPost() {
-        await axios.get('/purchase')
-            .then((data) => {
-                $.each(data.data, function (index, item1) {
-                    $('td.pur_id').each(function (index, item2) {
-                        if (item1.id == $(item2).text()) {
-                            const post = item1.purChasePost;
-                            const tr = $(item2).parent();
-                            const td = tr.children().eq(6);
-                            const input = td.children().find('input[type=radio]');
-                            $(input).each(function () {
-                                if ($(this).val() == post) {
-                                    $(this).attr('checked', 'true');
-                                }
-                            })
-                        }
-                    })
-                })
-            })
-    }
-    function proPostClick() {
-        $('input[type=radio]').on('click', async function () {
-            const purPost = $(this).val();
-            const tr = $(this).parent().parent().parent();;
-            // $(tr).each(function(index,item){
-            //     alert($(item).find('td.pur_id').text());
-            // })
-            const td = tr.children().eq(1).text();
-
-            //const id = td.eq(0).text();
-            await axios.post('/purchase/purPost', { purPost, id })
-                .then((data) => {
-                    getproPost();
-                })
         })
     }
     async function paging() {
@@ -146,7 +107,7 @@
             html += `<tr id="purPost_tag">`;
             html += `<td colspan="7" style="text-align:left;">`;
             html += `<div class="123">`;
-            html += `<b>평점 : <b><select name="pro_post">
+            html += `<b>평점 : </b><select name="pro_post">
     <option value="0">0</option>
     <option value="1">1</option>  
     <option value="2">2</option>
@@ -156,7 +117,7 @@
 </select>`;
             html += `</br></br>`;
             html += `<textarea placeholder="Please your Comment." style="resize:none" rows="2" cols="100"></textarea> `;
-            html += `<input type="button" id="postSuccess" value="등록"> <input type="button" id="postCancel" value="취소">`;
+            html += `<input type="button" id="postSuccess" value="등록" > <input type="button" id="postCancel" value="취소" >`;
             html += `</div></td></tr>`;
             tr.after(html);
             tr.children().eq(1).children().attr('disabled', 'true');
@@ -165,32 +126,54 @@
         })
     }
     function removePostPopup() {
-        $('#postCancel').click(function () {
+         $('#postCancel').click(function () {
             const flag = confirm('후기등록을 취소하시겠습니까?');
             if (flag) {
                 const tr = $(this).parent().parent().parent().parent();
-                //$(tr3).removeAttr('disabled');
-                tr.remove();
+                const tr2 = $(this).parent().parent().parent();
+                //  alert($(tr).attr('id'));
+                tr.find('input#postPopup').removeAttr('disabled');
+                tr2.remove();
             }
-        })
+         })
     }
     function successPostPopup() {
-        $('#postSuccess').click(async function () {
+         $('#postSuccess').click(async function () {
             const flag = confirm('후기등록을 하시겠습니까?');
             if (flag) {
                 const tr = $(this).parent().parent().parent().parent();
-                const purPost=$(tr).find('select').val();
-                const purComment=$(tr).find('textarea').val();
-                const userId=`{{user.id}}`;
-                const purId=tr.parent().parent().children().children().eq(0).text();
-                await axios.post('/purchaseComment',{purId,userId,purPost,purComment})
-                .then((data)=>{
-                    alert('후기등록이 완료되었습니다.');
-                })
-               
+                const purPost = $(tr).find('select').val();
+                const purComment = $(tr).find('textarea').val();
+                const userId = `{{user.id}}`;
+                const proId = tr.parent().parent().children().children().eq(0).val();
+                const purId = tr.parent().parent().children().children().eq(1).text();
+                await axios.post('/purchaseComment', { proId, purId, userId, purPost, purComment })
+                    .then((data) => {
+                        alert('후기등록이 완료되었습니다.');
+                        const tr = $(this).parent().parent().parent().parent();
+                        tr.remove();
+                        getPurPost();
+                    })
+
             }
-        })
+         })
     }
+    async function getPurPost() {
+        await axios.get('/purchaseComment')
+            .then((data) => {
+                $.each(data.data, function (index, item) {
+                    $('td.pur_id').each(function () {
+                        if (item.purChaseId == $(this).text()) {
+                            const tbody = $(this).parent().parent();
+                            if ($(tbody).attr('id') == item.purChaseId) {
+                                $(tbody).find('input#postPopup').attr('value', '후기작성완료').attr('disabled', 'true');
+                            }
+                        }
+                    })
+                })
+            })
+    }
+
 </script>
 <table class="styled-table" width="860">
     <thead>
@@ -207,7 +190,9 @@
     <tbody>
         {% if userFlag %}
         {% for item in result %}
-        <tr id="td" class="purchase_content">
+    <tbody id="{{item.id}}">
+        <tr id="td" class="purchase_content" name="{{item.id}}">
+            <input type="hidden" value="{{item.Product.id}}" />
             <td class="pur_id">{{item.id}}</td>
             <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
             <td>{{item.Product.proName}}</td>
@@ -218,20 +203,23 @@
         </tr>
         <tr class="data_td" id="td" style="text-align: left;">
             {% if item.purChaseStatus == 2 %}
-            <td colspan="6" style="text-align:left;"><label style="color: #000f98;">Created</label> {{item.created_at}}
+            <td colspan="6" style="text-align:left;"><label style="color: #000f98;">Created</label>
+                {{item.created_at}}
             </td>
             <td><input type="button" id="postPopup" value="후기작성"></td>
             {% else %}
-            <td colspan="7" style="text-align:left;"><label style="color: #000f98;">Created</label> {{item.created_at}}
+            <td colspan="7" style="text-align:left;"><label style="color: #000f98;">Created</label>
+                {{item.created_at}}
             </td>
             {% endif %}
         </tr>
-        {% endfor %}
-        {% elif dataFlag %}
-        <tr class="user_list_tr">
-            <td colspan="8" style="text-align: center;">No Data</td>
-        </tr>
-        {% endif %}
+    </tbody>
+    {% endfor %}
+    {% elif dataFlag %}
+    <tr class="user_list_tr">
+        <td colspan="8" style="text-align: center;">No Data</td>
+    </tr>
+    {% endif %}
     </tbody>
 </table>
 <div id="cur_page"></div>
