@@ -77,6 +77,7 @@
                 .then((data) => {
                     for (var i = 0; i < data.data.length; i++) {
                         var html2 = '';
+                        html2 += `<tbody id=${data.data[i].id} class="sub">`;
                         html2 += `<tr id="td" class="purchase_content">`;
                         html2 += `<td class="pur_id">${data.data[i].id}</td>`;
                         html2 += `<td><img src="${data.data[i].Product.proPhoto}" width="150" height="150"></td>`;
@@ -86,12 +87,16 @@
                         html2 += `<td id="total_sum">${data.data[i].purchaseTotal}</td>`;
                         html2 += `<td id="pro_status">${data.data[i].purChaseStatus}</td>`
                         html2 += ` </tr><tr id="td">`;
-                        html2 += ` <td colspan="9"><label style="color: #000f98;">Created</label>${data.data[i].created_at}</td></tr>`;
+                        html2 += `<td colspan="6" style="text-align:left;"><label style="color: #000f98;" >Created</label>${data.data[i].created_at}</td>`;
+                        html2 += `<td><input type="button" id="postPopup" value="후기작성"></td></tr>`
+                        html2 += `</tbody>`;
                         listArray.push(html2);
                     }
-                    $('tr#td').remove();
-                    $('tbody').append(listArray);
+                    $(`tbody.sub`).remove();
+                    $('thead').after(listArray);
                     getproStatus();
+                    getPurPost();
+
                 })
         })
 
@@ -103,10 +108,9 @@
         $('td input#postPopup').on('click', function (e) {
             var html = '';
             const tr = $(this).parent().parent();
-
+            const purId = tr.parent().attr('id');
             html += `<tr id="purPost_tag">`;
             html += `<td colspan="7" style="text-align:left;">`;
-            html += `<div class="123">`;
             html += `<b>평점 : </b><select name="pro_post">
     <option value="0">0</option>
     <option value="1">1</option>  
@@ -116,47 +120,47 @@
     <option value="5">5</option>
 </select>`;
             html += `</br></br>`;
-            html += `<textarea placeholder="Please your Comment." style="resize:none" rows="2" cols="100"></textarea> `;
-            html += `<input type="button" id="postSuccess" value="등록" > <input type="button" id="postCancel" value="취소" >`;
-            html += `</div></td></tr>`;
+            html += `<textarea placeholder="Please your Comment." style="resize:none" rows="2" cols="100" required></textarea> `;
+            html += `<input type="button" id="postSuccess" value="등록" onclick="successPostPopup(${purId});"> `;
+            html += `<input type="button" id="postCancel" value="취소" onclick="removePostPopup(${purId});">`;
+            html += `</td></tr>`;
             tr.after(html);
             tr.children().eq(1).children().attr('disabled', 'true');
-            removePostPopup();
-            successPostPopup();
         })
     }
-    function removePostPopup() {
-         $('#postCancel').click(function () {
-            const flag = confirm('후기등록을 취소하시겠습니까?');
-            if (flag) {
-                const tr = $(this).parent().parent().parent().parent();
-                const tr2 = $(this).parent().parent().parent();
-                //  alert($(tr).attr('id'));
-                tr.find('input#postPopup').removeAttr('disabled');
-                tr2.remove();
+    function removePostPopup(purId) {
+        const tbodyId = purId;
+        $('tbody').each(function () {
+            if ($(this).attr('id') == tbodyId) {
+                const flag = confirm('후기등록을 취소하시겠습니까?');
+                if (flag) {
+                    $(`tbody#${tbodyId}`).find('input#postPopup').removeAttr('disabled');
+                    $(`tbody#${tbodyId}`).find('tr#purPost_tag').remove();
+                }
             }
-         })
+        })
     }
-    function successPostPopup() {
-         $('#postSuccess').click(async function () {
-            const flag = confirm('후기등록을 하시겠습니까?');
-            if (flag) {
-                const tr = $(this).parent().parent().parent().parent();
-                const purPost = $(tr).find('select').val();
-                const purComment = $(tr).find('textarea').val();
-                const userId = `{{user.id}}`;
-                const proId = tr.parent().parent().children().children().eq(0).val();
-                const purId = tr.parent().parent().children().children().eq(1).text();
-                await axios.post('/purchaseComment', { proId, purId, userId, purPost, purComment })
-                    .then((data) => {
-                        alert('후기등록이 완료되었습니다.');
-                        const tr = $(this).parent().parent().parent().parent();
-                        tr.remove();
-                        getPurPost();
-                    })
+    function successPostPopup(purId_html) {
+        const tbodyId = purId_html;
+        $('tbody').each(async function () {
+            if ($(this).attr('id') == tbodyId) {
+                const flag = confirm('후기등록을 하시겠습니까?');
+                if (flag) {
+                    const purPost = $(this).find('select').val();
+                    const purComment = $(this).find('textarea').val();
+                    const userId = `{{user.id}}`;
+                    const proId = $(this).find('input[type="hidden"]').val();
+                    const purId=tbodyId;
 
+                    await axios.post('/purchaseComment', { proId, purId, userId, purPost, purComment })
+                        .then((data) => {
+                            alert('후기등록이 완료되었습니다.');
+                           $(this).find('tr#purPost_tag').remove();
+                            getPurPost();
+                        })
+                }
             }
-         })
+        })
     }
     async function getPurPost() {
         await axios.get('/purchaseComment')
@@ -187,10 +191,9 @@
             <th>상태</th>
         </tr>
     </thead>
-    <tbody>
-        {% if userFlag %}
-        {% for item in result %}
-    <tbody id="{{item.id}}">
+    {% if userFlag %}
+    {% for item in result %}
+    <tbody id="{{item.id}}" class="sub">
         <tr id="td" class="purchase_content" name="{{item.id}}">
             <input type="hidden" value="{{item.Product.id}}" />
             <td class="pur_id">{{item.id}}</td>
@@ -220,6 +223,5 @@
         <td colspan="8" style="text-align: center;">No Data</td>
     </tr>
     {% endif %}
-    </tbody>
 </table>
 <div id="cur_page"></div>
