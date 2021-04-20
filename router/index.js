@@ -161,6 +161,15 @@ router.get('/adminSidebar/:id', isLoggedIn, async (req, res, next) => {
                 });
             }
         }
+        if (Id == 3) {
+            const result = await PurChaseList.findAll({
+                include: [{
+                    all: true
+                }],
+            });
+
+            res.render('adminChart', result);
+        }
     } catch (error) {
         console.error(error);
         next(error);

@@ -10,13 +10,17 @@ const router = express.Router();
 
 router.get('/', async (req, res, next) => {
     try {
-        const result = await PurChaseList.findAll({})
+        const result = await PurChaseList.findAll({
+            include: [{
+                model: Product,
+            }],
+        })
         res.json(result);
     } catch (error) {
         console.error(error);
         next(error);
     }
-})
+});
 
 router.post('/', isLoggedIn, async (req, res, next) => {
     const type = req.body.type;

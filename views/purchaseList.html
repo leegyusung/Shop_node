@@ -85,18 +85,23 @@
                         html2 += ` <td id="pro_price">${data.data[i].Product.proPrice}</td>`;
                         html2 += `<td id="pro_amount">${data.data[i].purchaseAmount}</td>`;
                         html2 += `<td id="total_sum">${data.data[i].purchaseTotal}</td>`;
-                        html2 += `<td id="pro_status">${data.data[i].purChaseStatus}</td>`
-                        html2 += ` </tr><tr id="td">`;
-                        html2 += `<td colspan="6" style="text-align:left;"><label style="color: #000f98;" >Created</label>${data.data[i].created_at}</td>`;
-                        html2 += `<td><input type="button" id="postPopup" value="후기작성"></td></tr>`
-                        html2 += `</tbody>`;
+                        html2 += `<td id="pro_status">${data.data[i].purChaseStatus}</td>`;
+                        html2 += `</tr><tr class="data_td" id="td" style="text-align: left;">`;
+                        if (data.data[i].purChaseStatus == 2) {
+                            html2 += `<td colspan="6" style="text-align:left;"><label style="color: #000f98;" >Created</label>${data.data[i].created_at}</td>`;
+                            html2 += `<td><input type="button" id="postPopup" value="후기작성"></td>`;
+                        }
+                        else{
+                            html2 += `<td colspan="7" style="text-align:left;"><label style="color: #000f98;">Created</label>${data.data[i].created_at}</td>`;
+                        }
+                        html2 += `</tr></tbody>`;
                         listArray.push(html2);
                     }
                     $(`tbody.sub`).remove();
                     $('thead').after(listArray);
+                    purPostPopup();
                     getproStatus();
                     getPurPost();
-
                 })
         })
 
@@ -126,7 +131,9 @@
             html += `</td></tr>`;
             tr.after(html);
             tr.children().eq(1).children().attr('disabled', 'true');
+
         })
+
     }
     function removePostPopup(purId) {
         const tbodyId = purId;
@@ -150,12 +157,12 @@
                     const purComment = $(this).find('textarea').val();
                     const userId = `{{user.id}}`;
                     const proId = $(this).find('input[type="hidden"]').val();
-                    const purId=tbodyId;
+                    const purId = tbodyId;
 
                     await axios.post('/purchaseComment', { proId, purId, userId, purPost, purComment })
                         .then((data) => {
                             alert('후기등록이 완료되었습니다.');
-                           $(this).find('tr#purPost_tag').remove();
+                            $(this).find('tr#purPost_tag').remove();
                             getPurPost();
                         })
                 }

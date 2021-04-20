@@ -1,0 +1,122 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        try {
+
+        } catch (error) {
+
+        }
+        finally {
+            google.charts.load('current', { 'packages': ['corechart'] });
+            google.charts.load('current', { 'packages': ['bar'] });
+            google.charts.setOnLoadCallback(drawChart);
+            google.charts.setOnLoadCallback(drawChart2);
+        }
+
+        //   drawChart();
+    })
+    async function drawChart() {
+        var top = 0;
+        var bottom = 0;
+        var shoes = 0;
+        var var_Array = new Array();
+        await axios.get('/purchase')
+            .then((data) => {
+                try {
+                    for (var i = 0; i <= data.data.length; i++) {
+                        var_Array.push(data.data[i].Product.proType);
+                    }
+                }
+                catch {
+
+                }
+                finally {
+                    for (var i = 0; i <= var_Array.length; i++) {
+                        if (var_Array[i] == 'top') {
+                            top++;
+                        }
+                        if (var_Array[i] == 'bottom') {
+                            bottom++;
+                        }
+                        if (var_Array[i] == 'shoes') {
+                            shoes++;
+                        }
+                    }
+                    var data = google.visualization.arrayToDataTable([
+                        ['Task', 'Hours per Day'],
+                        ['Top', top],
+                        ['Bottom', bottom],
+                        ['Shoes', shoes]
+                    ]);
+                    var options = {
+                        title: '상품타입별 판매실적',
+                        is3D: true,
+                    };
+                    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+                    chart.draw(data, options);
+
+                }
+            })
+    }
+    async function drawChart2() {
+        var amount = 0;
+        var count = 0;
+        var var_Array = new Array();
+        var var_Array2 = [];
+        var var_json = {};
+        var year = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+        await axios.get('/purchase')
+            .then((data) => {
+                try {
+                    for (var i = 0; i < data.data.length; i++) {
+                        var_json.purChaseAmount = data.data[i].purchaseAmount;
+                        var_json.purChaseTotal = data.data[i].purchaseTotal;
+                        var_json.created_at = data.data[i].created_at.slice(5, 7);
+                        var_Array.push(var_json)
+                    }
+                    for (var i = 0; i < year.length; i++) {
+                        for (var j = 0; j < var_Array.length; j++) {
+                            if (var_Array[j].created_at == year[i]) {
+                                var month = var_Array[j].created_at;
+                                amount += var_Array[j].purChaseAmount;
+                                count += var_Array[j].purChaseTotal;
+                            }
+                        }
+
+                    }
+                    var format1 = ['Month', 'Amount', 'Price'];
+                    var format2 = [month, amount, count];
+                    var_Array2.push(format2);
+                    alert(var_Array2);
+                } catch (error) {
+
+                }
+                finally {
+
+                }
+            })
+
+        var data = google.visualization.arrayToDataTable([
+            ['Month', 'Amount', 'Total'],
+            ['04', amount, count],
+        ]);
+
+        var options = {
+            chart: {
+                title: '월별 판매실적',
+            }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+</script>
+
+<body>
+    <div>
+        <div id="piechart" style="width: 50%; height: 400px; float: left;"></div>
+        <div id="columnchart_material" style="width: 50%; height: 400px; float: left;"></div>
+    </div>
+
+</body>
