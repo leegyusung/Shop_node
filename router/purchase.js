@@ -5,6 +5,9 @@ const WishList = require('../models/wishlist');
 const PurChaseList = require('../models/purchaselist');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
+var Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+
 
 const router = express.Router();
 
@@ -15,6 +18,20 @@ router.get('/', async (req, res, next) => {
                 model: Product,
             }],
         })
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
+router.get('/chart2', async (req, res, next) => {
+    try {
+        const result = await PurChaseList.findAll({
+            attributes: ['purchaseAmount', 'purchaseTotal','created_at']
+        })
+        for(var i=0; i<result.length; i++){
+            result[i].created_at=date_to_str(result[i].created_at);
+        }
         res.json(result);
     } catch (error) {
         console.error(error);
@@ -165,5 +182,21 @@ router.post('/purPost', async (req, res, next) => {
         next(error);
     }
 });
+
+function date_to_str(format){
+    var year = format.getFullYear();
+    var month = format.getMonth() + 1;
+    if(month<10) month = '0' + month;
+    var date = format.getDate();
+    if(date<10) date = '0' + date;
+    var hour = format.getHours();
+    if(hour<10) hour = '0' + hour;
+    var min = format.getMinutes();
+    if(min<10) min = '0' + min;
+    var sec = format.getSeconds();
+    if(sec<10) sec = '0' + sec;
+    
+    return year + "-" + month + "-" + date;
+}
 
 module.exports = router;

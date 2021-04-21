@@ -12,8 +12,6 @@
             google.charts.setOnLoadCallback(drawChart);
             google.charts.setOnLoadCallback(drawChart2);
         }
-
-        //   drawChart();
     })
     async function drawChart() {
         var top = 0;
@@ -59,56 +57,42 @@
             })
     }
     async function drawChart2() {
+        var type = ['Day', 'Amount', 'Total'];
+        var day = "";
         var amount = 0;
-        var count = 0;
-        var var_Array = new Array();
-        var var_Array2 = [];
-        var var_json = {};
-        var year = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-        await axios.get('/purchase')
+        var total = 0;
+        var var_array = new Array();
+        var var_array2 = new Array();
+        var arr = [];
+        await axios.get('/purchase/chart2')
             .then((data) => {
-                try {
-                    for (var i = 0; i < data.data.length; i++) {
-                        var_json.purChaseAmount = data.data[i].purchaseAmount;
-                        var_json.purChaseTotal = data.data[i].purchaseTotal;
-                        var_json.created_at = data.data[i].created_at.slice(5, 7);
-                        var_Array.push(var_json)
-                    }
-                    for (var i = 0; i < year.length; i++) {
-                        for (var j = 0; j < var_Array.length; j++) {
-                            if (var_Array[j].created_at == year[i]) {
-                                var month = var_Array[j].created_at;
-                                amount += var_Array[j].purChaseAmount;
-                                count += var_Array[j].purChaseTotal;
-                            }
+                var_array = data.data;
+                for (var i = 0; i <= var_array.length; i++) {
+                    if (var_array[i + 1] != undefined) {
+                        if (var_array[i].created_at.slice(5, 10) == var_array[i + 1].created_at.slice(5, 10)) {
+                            day = var_array[i].created_at.slice(5, 10);
+                            amount = var_array[i].purchaseAmount+var_array[i + 1].purchaseAmount;
+                            total = var_array[i].purchaseTotal+var_array[i + 1].purchaseTotal;
+                            arr = [day, String(amount), total];
+                            var_array2.push(arr);
+                            var_array.splice([i+1],1);  //끝배열이 없을경우 배열을 삭제해가면서 해결
                         }
-
+                        else {
+                            arr = [var_array[i].created_at.slice(5, 10), String(var_array[i].purchaseAmount), var_array[i].purchaseTotal];
+                            var_array2.push(arr);
+                        }
                     }
-                    var format1 = ['Month', 'Amount', 'Price'];
-                    var format2 = [month, amount, count];
-                    var_Array2.push(format2);
-                    alert(var_Array2);
-                } catch (error) {
-
-                }
-                finally {
-
                 }
             })
-
-        var data = google.visualization.arrayToDataTable([
-            ['Month', 'Amount', 'Total'],
-            ['04', amount, count],
-        ]);
+        var_array2.unshift(type); //배열가장앞에 추가
+        var data = google.visualization.arrayToDataTable(var_array2);
 
         var options = {
             chart: {
-                title: '월별 판매실적',
+                title: '일별 판매실적',
             }
         };
-
         var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
-
         chart.draw(data, google.charts.Bar.convertOptions(options));
     }
 </script>
