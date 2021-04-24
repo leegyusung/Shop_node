@@ -90,8 +90,8 @@
                         html2 += `<td>${data.data[i].proName}</td>`;
                         html2 += `<td>${data.data[i].proPrice}</td>`;
                         html2 += `<td>${data.data[i].proAmount}</td>`;
-                        html2 += ` <td>${data.data[i].createdAt}</td>`;
                         html2 += `<td><input type="button" class="delete_btn" value="삭제"></td>`;
+                        html2 += `<td><input type="button" value="변경"></td>`;
                         listArray.push(html2);
                     }
                     $('tr#td').remove();
@@ -104,14 +104,13 @@
 <table class="styled-table">
     <thead>
         <tr>
-            <th>상품번호</th>
+            <th>번호</th>
             <th>타입</th>
             <th>상품</th>
             <th>상품명</th>
             <th>가격</th>
             <th>재고</th>
-            <th>등록일</th>
-            <th></th>
+            <th colspan="2"></th>
         </tr>
     </thead>
     <tbody>
@@ -124,8 +123,8 @@
             <td>{{item.proName}}</td>
             <td>{{item.proPrice}}</td>
             <td>{{item.proAmount}}</td>
-            <td>{{item.createdAt}}</td>
             <td><input type="button" class="delete_btn" value="삭제"></td>
+            <td><input type="button" class="update_btn" value="변경"></td>
         </tr>
         {% endfor %}
         {% elif dataFlag %}

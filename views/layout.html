@@ -70,13 +70,17 @@
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownBlog">
               <a class="dropdown-item" onclick="myPage(`{{user.id}}`)">My Profile</a>
             </div>
+            {% endif %}
+            {% if user.admin == false %}
           <li class="nav-item">
             <a class="nav-link">보유금액 : {{user.money}} 원</a>
-          </li>  
+          </li>
+          {% endif %}
+          {% if user.id %}
           <li class="nav-item">
             <a class="nav-link" onclick="logOut()">Logout</a>
           </li>
-          {% else %}
+         {% else %}
           <li class="nav-item">
             <a class="nav-link" href="/login">Login</a>
           </li>

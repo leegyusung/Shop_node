@@ -43,16 +43,13 @@ router.get('/chart3/:userId', async (req, res, next) => {
     const userId=req.params.userId;
     try {
         const result = await PurChaseList.findAll({
-            attributes: ['purchaseAmount', 'purChaseProductId'],
+            attributes: ['purchaseAmount'],
             where: {
                 purChaseUserId: userId,
             },
             include: [{
                 model: Product,
                 attributes: ['proType'],
-                where: {
-                    id: 9,
-                }
             }],
         })
         res.json(result);
