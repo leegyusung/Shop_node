@@ -167,8 +167,14 @@ router.get('/adminSidebar/:id', isLoggedIn, async (req, res, next) => {
                     all: true
                 }],
             });
+            const result2 = await User.findAll({
+                attributes: ['id', 'name'],
+                where: {
+                    admin: 0
+                }
+            })
 
-            res.render('adminChart', result);
+            res.render('adminChart', { result, result2 });
         }
     } catch (error) {
         console.error(error);

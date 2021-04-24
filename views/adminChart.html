@@ -11,6 +11,8 @@
             google.charts.load('current', { 'packages': ['bar'] });
             google.charts.setOnLoadCallback(drawChart);
             google.charts.setOnLoadCallback(drawChart2);
+            google.charts.setOnLoadCallback(drawVisualization);
+            google.charts.setOnLoadCallback(drawVisualization2);
         }
     })
     async function drawChart() {
@@ -21,23 +23,21 @@
         await axios.get('/purchase')
             .then((data) => {
                 try {
-                    for (var i = 0; i <= data.data.length; i++) {
-                        var_Array.push(data.data[i].Product.proType);
-                    }
+                    var_Array = data.data;
                 }
                 catch {
 
                 }
                 finally {
-                    for (var i = 0; i <= var_Array.length; i++) {
-                        if (var_Array[i] == 'top') {
-                            top++;
+                    for (var i = 0; i < var_Array.length; i++) {
+                        if (var_Array[i].Product.proType == 'top') {
+                            top += var_Array[i].purchaseAmount;
                         }
-                        if (var_Array[i] == 'bottom') {
-                            bottom++;
+                        if (var_Array[i].Product.proType == 'bottom') {
+                            bottom += var_Array[i].purchaseAmount;
                         }
-                        if (var_Array[i] == 'shoes') {
-                            shoes++;
+                        if (var_Array[i].Product.proType == 'shoes') {
+                            shoes += var_Array[i].purchaseAmount;
                         }
                     }
                     var data = google.visualization.arrayToDataTable([
@@ -67,15 +67,16 @@
         await axios.get('/purchase/chart2')
             .then((data) => {
                 var_array = data.data;
-                for (var i = 0; i <= var_array.length; i++) {
+                for (var i = 0; i < var_array.length; i++) {
                     if (var_array[i + 1] != undefined) {
                         if (var_array[i].created_at.slice(5, 10) == var_array[i + 1].created_at.slice(5, 10)) {
                             day = var_array[i].created_at.slice(5, 10);
-                            amount = var_array[i].purchaseAmount+var_array[i + 1].purchaseAmount;
-                            total = var_array[i].purchaseTotal+var_array[i + 1].purchaseTotal;
+                            amount = var_array[i].purchaseAmount + var_array[i + 1].purchaseAmount;
+                            total = var_array[i].purchaseTotal + var_array[i + 1].purchaseTotal;
                             arr = [day, String(amount), total];
                             var_array2.push(arr);
-                            var_array.splice([i+1],1);  //끝배열이 없을경우 배열을 삭제해가면서 해결
+                            var_array.splice([i + 1], 1);  //끝배열이 없을경우 배열을 삭제해가면서 해결
+                            //alert(JSON.stringify(arr));
                         }
                         else {
                             arr = [var_array[i].created_at.slice(5, 10), String(var_array[i].purchaseAmount), var_array[i].purchaseTotal];
@@ -85,6 +86,7 @@
                 }
             })
         var_array2.unshift(type); //배열가장앞에 추가
+        //alert(JSON.stringify(var_array2));
         var data = google.visualization.arrayToDataTable(var_array2);
 
         var options = {
@@ -95,12 +97,91 @@
         var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
         chart.draw(data, google.charts.Bar.convertOptions(options));
     }
+    function drawVisualization2() {
+        var data;
+        if ($('select#user_change').val() == 0) {
+
+            data = google.visualization.arrayToDataTable([
+                ['User', 'Top', 'Bottom', 'Shoes', 'Average'],
+                ["", 0, 0, 0, 0]
+            ]);
+            var options = {
+                title: '유저별 구입 품목',
+                vAxis: { title: 'Amount' },
+                hAxis: { title: 'User' },
+                seriesType: 'bars',
+                series: { 5: { type: 'line' } }
+            };
+
+            var chart = new google.visualization.ComboChart(document.getElementById('chart2'));
+            chart.draw(data, options);
+        }
+    }
+
+    function drawVisualization() {
+        var userId;
+        var userName;
+        var type = ['User', 'Top', 'Bottom', 'Shoes', 'Average'];
+        var var_array = new Array();
+        var var_array2 = new Array();
+        var Top = 0;
+        var Bottom = 0;
+        var Shoes = 0;
+        var data;
+        var arr = [];
+        $('select#user_change').change(async function () {
+            userId = $(this).val();
+            await axios.get(`/purchase/chart3/${userId}`)
+                .then((data) => {
+                    var_array = data.data;
+                    for (var i = 0; i < var_array.length; i++) {
+                    
+                        if (var_array[i].Product.proType == "top") {
+                            Top = var_array[i].purchaseAmount;
+                        }
+                        if (var_array[i].Product.proType == "bottom") {
+                            Bottom = var_array[i].purchaseAmount;
+                        }
+                        if (var_array[i].Product.proType == "shoes") {
+                            Shoes = var_array[i].purchaseAmount;
+                        }
+                        arr = ["규성", Top, Bottom, Shoes, ((Top + Bottom + Shoes) / 3).toFixed(1)];
+                        var_array2.push(arr);
+                    }
+                })
+
+            var_array2.push(type);
+            alert(var_array2);
+            data = google.visualization.arrayToDataTable(var_array2);
+            var options = {
+                title: '유저별 구입 품목',
+                vAxis: { title: 'Amount' },
+                hAxis: { title: 'User' },
+                seriesType: 'bars',
+                series: { 5: { type: 'line' } }
+            };
+
+            var chart = new google.visualization.ComboChart(document.getElementById('chart2'));
+            chart.draw(data, options);
+        })
+
+
+
+    }
 </script>
 
 <body>
-    <div>
-        <div id="piechart" style="width: 50%; height: 400px; float: left;"></div>
-        <div id="columnchart_material" style="width: 50%; height: 400px; float: left;"></div>
+    <div id="chart1">
+        <div id="piechart" style="width: 50%; height: 350px; float: left;"></div>
+        <div id="columnchart_material" style="width: 50%; height: 350px; float: left;"></div>
     </div>
-
+    <div>
+        <select name="User" id="user_change">
+            <option value="0" id="0">----</option>
+            {% for item in result2%}
+            <option value="{{item.id}}">{{item.name}}</option>
+            {% endfor %}
+        </select>
+        <div id="chart2" style="position: fixed; bottom: 0; height: 200px; width: 800px; float: left"></div>
+    </div>
 </body>

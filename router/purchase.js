@@ -27,10 +27,10 @@ router.get('/', async (req, res, next) => {
 router.get('/chart2', async (req, res, next) => {
     try {
         const result = await PurChaseList.findAll({
-            attributes: ['purchaseAmount', 'purchaseTotal','created_at']
+            attributes: ['purchaseAmount', 'purchaseTotal', 'created_at']
         })
-        for(var i=0; i<result.length; i++){
-            result[i].created_at=date_to_str(result[i].created_at);
+        for (var i = 0; i < result.length; i++) {
+            result[i].created_at = date_to_str(result[i].created_at);
         }
         res.json(result);
     } catch (error) {
@@ -39,6 +39,28 @@ router.get('/chart2', async (req, res, next) => {
     }
 });
 
+router.get('/chart3/:userId', async (req, res, next) => {
+    const userId=req.params.userId;
+    try {
+        const result = await PurChaseList.findAll({
+            attributes: ['purchaseAmount', 'purChaseProductId'],
+            where: {
+                purChaseUserId: userId,
+            },
+            include: [{
+                model: Product,
+                attributes: ['proType'],
+                where: {
+                    id: 9,
+                }
+            }],
+        })
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
 router.post('/', isLoggedIn, async (req, res, next) => {
     const type = req.body.type;
     try {
@@ -183,19 +205,19 @@ router.post('/purPost', async (req, res, next) => {
     }
 });
 
-function date_to_str(format){
+function date_to_str(format) {
     var year = format.getFullYear();
     var month = format.getMonth() + 1;
-    if(month<10) month = '0' + month;
+    if (month < 10) month = '0' + month;
     var date = format.getDate();
-    if(date<10) date = '0' + date;
+    if (date < 10) date = '0' + date;
     var hour = format.getHours();
-    if(hour<10) hour = '0' + hour;
+    if (hour < 10) hour = '0' + hour;
     var min = format.getMinutes();
-    if(min<10) min = '0' + min;
+    if (min < 10) min = '0' + min;
     var sec = format.getSeconds();
-    if(sec<10) sec = '0' + sec;
-    
+    if (sec < 10) sec = '0' + sec;
+
     return year + "-" + month + "-" + date;
 }
 
