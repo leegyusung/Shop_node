@@ -7,11 +7,11 @@ module.exports = class PurChaseComment extends Sequelize.Model {
                 type: Sequelize.STRING(100),
                 allowNull: false,
             },
-            productId: {
+            productId2: {
                 type: Sequelize.STRING(100),
                 allowNull: false,
             },
-            userId: {
+            userId2: {
                 type: Sequelize.STRING(100),
                 allowNull: false,
             },
@@ -40,6 +40,7 @@ module.exports = class PurChaseComment extends Sequelize.Model {
         });
     }
     static associate(db) {
-
+        db.PurChaseComment.belongsTo(db.User, { foreignKey: 'purChaseCommentUserId', targetKey: 'id' });
+        db.PurChaseComment.belongsTo(db.Product, { foreignKey: 'purChaseCommentProductId', targetKey: 'id' });
     }
 };

@@ -1,0 +1,63 @@
+<!-- Custom styles for this template -->
+<link href="../css/modern-business.css" rel="stylesheet">
+<script>
+    $(document).ready(() => {
+        Filter();
+    })
+    function Filter() {
+        $('#filter_button').click(async function () {
+            const filter_change = $('#filter_change option:selected').val();
+            const filter_text = $('#filter_text').val();
+            await axios.get(`/purchaseComment/filter/${filter_change}/${filter_text}`)
+                .then((data) => {
+                    alert(JSON.stringify(data.data));
+                    var html = "";
+                    for (var i = 0; i < data.data.length; i++) {
+                        html += `<tr id="td">`;
+                        html += `<td>${data.data[i].Product.proName}</td>`;
+                        html += `<td>${data.data[i].User.name}</td>`;
+                        html += `<td>${data.data[i].purChaseComment}</td>`;
+                        html += `<td>${data.data[i].purChaseCommentPost}</td>`;
+                        html += `</tr>`;
+                    }
+                    $('tr#td').remove();
+                    $('tbody#id').after(html);
+                })
+        })
+
+    }
+</script>
+<table class="styled-table" width="820">
+    <thead>
+        <tr>
+            <th>상품명</th>
+            <th>유저이름</th>
+            <th>후기</th>
+            <th>평점</th>
+        </tr>
+    </thead>
+    <tbody id="id">
+        {% for item in result %}
+        <tr id="td">
+            <td>{{item.Product.proName}}</td>
+            <td>{{item.User.name}}</td>
+            <td>{{item.purChaseComment}}</td>
+            <td>{{item.purChaseCommentPost}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<table class="styled-table" width="820">
+    <tr>
+        <th style="text-align: left;">
+            <select name="Filter" id="filter_change">
+                <option value="0" id="0">----</option>
+                <option value="1" id="1">상품명</option>
+                <option value="2" id="2">유저</option>
+                <option value="3" id="3">후기</option>
+            </select>
+            <input type="text" id="filter_text" size=95>
+            <input type="button" id='filter_button' value="검색">
+        </th>
+    </tr>
+</table>

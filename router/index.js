@@ -3,6 +3,7 @@ const User = require('../models/user');
 const Product = require('../models/product');
 const WishList = require('../models/wishlist');
 const PurChaseList = require('../models/purchaselist');
+const purchaseComment = require('../models/purChaseComment');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
 const router = express.Router();
@@ -88,18 +89,18 @@ router.get('/userSidebar/:id', isLoggedIn, async (req, res, next) => {
             }
         }
         if (Id == 2) {
-            console.log(Id);
-            res.render('purChasePost');
+            const result = await purchaseComment.findAll({
+                include: [{
+                    all: true
+                }],
+            });
+            res.render('purchaseComment', { result: result });
         }
     } catch (error) {
         console.error(error);
         next(error);
     }
 });
-// router.get('/userSidebar/:id/purPost', isLoggedIn,  (req, res, next) => {
-//    res.render('purChasePost');
-// })
-
 router.get('/adminSidebar', isLoggedIn, (req, res, next) => {
     res.render('adminSideBar');
 })
