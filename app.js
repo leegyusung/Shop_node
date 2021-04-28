@@ -8,19 +8,19 @@ const path = require('path');
 const { sequelize } = require('./models');
 const passport = require('passport');
 const passportConfig = require('./passport');
-const logger=require('./logger');
+const logger = require('./logger');
 
 
 const indexRouter = require('./router');
 const signRouter = require('./router/signin');
 const loginRouter = require('./router/login');
-const productRouter=require('./router/product');
+const productRouter = require('./router/product');
 const productsRouter = require('./router/productList');
 const productRegisterRouter = require('./router/productRegister');
-const commentRouter=require('./router/comment');
-const wishlistRouter=require('./router/wishlist');
-const purchaselistRouter=require('./router/purchase');
-const purchaseCommentRouter=require('./router/purchaseComment');
+const commentRouter = require('./router/comment');
+const wishlistRouter = require('./router/wishlist');
+const purchaselistRouter = require('./router/purchase');
+const purchaseCommentRouter = require('./router/purchaseComment');
 
 
 dotenv.config();
@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(session({
+const sessionOption = {
     resave: false,
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET,
@@ -47,9 +47,8 @@ app.use(session({
         secure: true,
         //maxAge: 1000 * 60 * 60,
     },
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+};
+
 //Mysql 초기설정
 sequelize.sync({ force: false })//force가 true 면 서버가 돌아갈때마다 테이블생성
     .then(() => {
@@ -59,21 +58,32 @@ sequelize.sync({ force: false })//force가 true 면 서버가 돌아갈때마다
         console.error(err);
     });
 //Mysql 초기설정
-if(process.env.NODE_ENV==='production'){
+
+
+if (process.env.NODE_ENV === 'production') {
+
     app.use(morgan('combined'));
-}else{
+} else {
     app.use(morgan('dev'));
 }
+
+if (process.env.NODE_ENV === 'production') {
+    sessionOption.proxy = true;
+    // sessionOption.cookie.secure = true;
+}
+app.use(session(sessionOption));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/signin', signRouter);
 app.use('/login', loginRouter);
-app.use('/product',productRouter);
+app.use('/product', productRouter);
 app.use('/productList', productsRouter);
 app.use('/productRegister', productRegisterRouter);
-app.use('/comment',commentRouter);
-app.use('/wishlist',wishlistRouter);
-app.use('/purchase',purchaselistRouter);
-app.use('/purchaseComment',purchaseCommentRouter)
+app.use('/comment', commentRouter);
+app.use('/wishlist', wishlistRouter);
+app.use('/purchase', purchaselistRouter);
+app.use('/purchaseComment', purchaseCommentRouter)
 
 
 app.listen(app.get('port'), () => {
