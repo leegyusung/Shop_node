@@ -31,27 +31,24 @@ router.get('/filter/:menu/:text', async (req, res, next) => {
         if (req.params.menu == 1) {
             const result = await PurChaseComment.findAll({
                 include: [{
-                    model:Product,
+                    model: Product,
                     where: {
                         proName: { [Op.like]: text }
                     },
 
                 }],
             })
-            console.log(result);
             res.json(result);
         }
         if (req.params.menu == 2) {
             const result = await PurChaseComment.findAll({
+                where: {
+                    purChaseUserName: { [Op.like]: text }
+                },
                 include: [{
-                    model:User,
-                    where: {
-                        name: { [Op.like]: text }
-                    },
-
+                    model: Product,
                 }],
             })
-            console.log(result);
             res.json(result);
         }
         if (req.params.menu == 3) {
@@ -75,11 +72,12 @@ router.post('/', isLoggedIn, async (req, res, next) => {
         const result = await PurChaseComment.create({
             userId2: req.body.userId,
             purChaseId: req.body.purId,
-            productId2: req.body.proId,
+            productId2: proId,
+            purChaseUserName: req.body.userName,
             purChaseCommentPost: req.body.purPost,
             purChaseComment: req.body.purComment,
             purChaseCommentUserId: req.body.userId,
-            purChaseCommentProductId: req.body.proId,
+            purChaseCommentProductId: proId,
         })
         const result2 = await PurChaseComment.count({
             where: { productId2: proId }

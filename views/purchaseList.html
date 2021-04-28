@@ -78,7 +78,9 @@
                     for (var i = 0; i < data.data.length; i++) {
                         var html2 = '';
                         html2 += `<tbody id=${data.data[i].id} class="sub">`;
+                        html2 += `<input type="hidden" id="pur_userName" value="${data.data[i].User.name}">`;
                         html2 += `<tr id="td" class="purchase_content">`;
+                        html2 += ` <input type="hidden" id="pur_productId" value="${data.data[i].Product.id}}" />`
                         html2 += `<td class="pur_id">${data.data[i].id}</td>`;
                         html2 += `<td><img src="${data.data[i].Product.proPhoto}" width="150" height="150"></td>`;
                         html2 += `<td>${data.data[i].Product.proName}</td>`;
@@ -91,7 +93,7 @@
                             html2 += `<td colspan="6" style="text-align:left;"><label style="color: #000f98;" >Created</label>${data.data[i].created_at}</td>`;
                             html2 += `<td><input type="button" id="postPopup" value="후기작성"></td>`;
                         }
-                        else{
+                        else {
                             html2 += `<td colspan="7" style="text-align:left;"><label style="color: #000f98;">Created</label>${data.data[i].created_at}</td>`;
                         }
                         html2 += `</tr></tbody>`;
@@ -153,13 +155,14 @@
             if ($(this).attr('id') == tbodyId) {
                 const flag = confirm('후기등록을 하시겠습니까?');
                 if (flag) {
+                    const userName = $(this).find('#pur_userName').val();
                     const purPost = $(this).find('select').val();
                     const purComment = $(this).find('textarea').val();
                     const userId = `{{user.id}}`;
-                    const proId = $(this).find('input[type="hidden"]').val();
+                    const proId = $(this).find('#pur_productId').val();
                     const purId = tbodyId;
 
-                    await axios.post('/purchaseComment', { proId, purId, userId, purPost, purComment })
+                    await axios.post('/purchaseComment', { proId, purId, userId, userName, purPost, purComment })
                         .then((data) => {
                             alert('후기등록이 완료되었습니다.');
                             $(this).find('tr#purPost_tag').remove();
@@ -201,8 +204,9 @@
     {% if userFlag %}
     {% for item in result %}
     <tbody id="{{item.id}}" class="sub">
+        <input type="hidden" id="pur_userName" value="{{item.User.name}}">
         <tr id="td" class="purchase_content" name="{{item.id}}">
-            <input type="hidden" value="{{item.Product.id}}" />
+            <input type="hidden" id="pur_productId" value="{{item.Product.id}}" />
             <td class="pur_id">{{item.id}}</td>
             <td><img src="{{item.Product.proPhoto}}" width="150" height="150"></td>
             <td>{{item.Product.proName}}</td>

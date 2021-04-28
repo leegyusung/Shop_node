@@ -67,7 +67,7 @@ router.get('/userSidebar/:id', isLoggedIn, async (req, res, next) => {
             const result2 = await PurChaseList.findAll({
                 where: { purChaseUserId: req.user.id },
                 include: [{
-                    model: Product,
+                    all: true,
                 }],
             });
             var result = new Array();

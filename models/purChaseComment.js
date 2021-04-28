@@ -15,6 +15,10 @@ module.exports = class PurChaseComment extends Sequelize.Model {
                 type: Sequelize.STRING(100),
                 allowNull: false,
             },
+            purChaseUserName: {
+                type: Sequelize.STRING(100),
+                allowNull: false,
+            },
             purChaseCommentPost: {
                 type: Sequelize.FLOAT,
                 allowNull: false,

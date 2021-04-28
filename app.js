@@ -8,6 +8,7 @@ const path = require('path');
 const { sequelize } = require('./models');
 const passport = require('passport');
 const passportConfig = require('./passport');
+const logger=require('./logger');
 
 
 const indexRouter = require('./router');
@@ -43,8 +44,8 @@ app.use(session({
     secret: process.env.COOKIE_SECRET,
     cookie: {
         httpOnly: true,
-        secure: false,
-        maxAge: 1000 * 60 * 60,
+        secure: true,
+        //maxAge: 1000 * 60 * 60,
     },
 }));
 app.use(passport.initialize());
@@ -58,7 +59,11 @@ sequelize.sync({ force: false })//force가 true 면 서버가 돌아갈때마다
         console.error(err);
     });
 //Mysql 초기설정
-
+if(process.env.NODE_ENV==='production'){
+    app.use(morgan('combined'));
+}else{
+    app.use(morgan('dev'));
+}
 app.use('/', indexRouter);
 app.use('/signin', signRouter);
 app.use('/login', loginRouter);

@@ -10,12 +10,11 @@
             const filter_text = $('#filter_text').val();
             await axios.get(`/purchaseComment/filter/${filter_change}/${filter_text}`)
                 .then((data) => {
-                    alert(JSON.stringify(data.data));
                     var html = "";
                     for (var i = 0; i < data.data.length; i++) {
                         html += `<tr id="td">`;
                         html += `<td>${data.data[i].Product.proName}</td>`;
-                        html += `<td>${data.data[i].User.name}</td>`;
+                        html += `<td>${data.data[i].purChaseUserName}</td>`;
                         html += `<td>${data.data[i].purChaseComment}</td>`;
                         html += `<td>${data.data[i].purChaseCommentPost}</td>`;
                         html += `</tr>`;
@@ -40,7 +39,7 @@
         {% for item in result %}
         <tr id="td">
             <td>{{item.Product.proName}}</td>
-            <td>{{item.User.name}}</td>
+            <td>{{item.purChaseUserName}}</td>
             <td>{{item.purChaseComment}}</td>
             <td>{{item.purChaseCommentPost}}</td>
         </tr>
