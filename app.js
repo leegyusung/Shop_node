@@ -32,7 +32,6 @@ nunjucks.configure('views', {
     express: app,
     watch: true,
 });
-app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
@@ -44,7 +43,7 @@ const sessionOption = {
     secret: process.env.COOKIE_SECRET,
     cookie: {
         httpOnly: true,
-        secure: true,
+        secure: false,
         //maxAge: 1000 * 60 * 60,
     },
 };
@@ -58,15 +57,11 @@ sequelize.sync({ force: false })//force가 true 면 서버가 돌아갈때마다
         console.error(err);
     });
 //Mysql 초기설정
-
-
 if (process.env.NODE_ENV === 'production') {
-
     app.use(morgan('combined'));
 } else {
     app.use(morgan('dev'));
 }
-
 if (process.env.NODE_ENV === 'production') {
     sessionOption.proxy = true;
     // sessionOption.cookie.secure = true;

@@ -1,5 +1,4 @@
 const express = require('express');
-const bcrypt = require('bcrypt')
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const User = require('../models/user');
 
@@ -10,7 +9,6 @@ router.get('/', isNotLoggedIn, (req, res, next) => {
 })
 
 router.post('/', isNotLoggedIn, async (req, res, next) => {
-    const hash = await bcrypt.hash(req.body.password, 12);
     try {
         const user = await User.findOne({
             where: { email: req.body.email }
@@ -18,7 +16,7 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
      
         const result = await User.create({
             email: req.body.email,
-            password: hash,
+            password: req.body.password,
             name: req.body.name,
         })
         return res.redirect('/');

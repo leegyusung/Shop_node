@@ -1,6 +1,5 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
 
 const User = require('../models/user');
 
@@ -12,8 +11,7 @@ module.exports = () => {
         try {
             const exUser = await User.findOne({ where: { email } });
             if (exUser) {
-                const result = await bcrypt.compare(password, exUser.password);
-                if (result) {
+                if (password==exUser.password) {
                     done(null, exUser);
                 } else {
                     done(null, false, { message:'비밀번호가 일치하지 않습니다' });

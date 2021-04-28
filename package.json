@@ -6,12 +6,12 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app",
-    "test": "nodemon app"
+    "test": "nodemon app",
+    "heroku-postbuild": "npx webpack"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.5",
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
