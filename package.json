@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app",
-    "test": "nodemon app",
-    "heroku-postbuild": "npx webpack"
+    "test": "nodemon app"
   },
   "author": "",
   "license": "ISC",
