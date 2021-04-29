@@ -8,7 +8,6 @@ const path = require('path');
 const { sequelize } = require('./models');
 const passport = require('passport');
 const passportConfig = require('./passport');
-const logger = require('./logger');
 
 
 const indexRouter = require('./router');

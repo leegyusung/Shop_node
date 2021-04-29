@@ -3,10 +3,10 @@ const User = require('./user');
 const Comment = require('./comment');
 const Product = require('./product');
 const Wishlist = require('./wishlist');
-const Purchaselist=require('./purchaselist');
-const PurChaseComment=require('./purChaseComment');
+const Purchaselist = require('./purchaselist');
+const PurChaseComment = require('./purChaseComment');
 
-const env = process.env.NODE_ENV || 'production';
+const env = process.env.NODE_ENV || 'production' || 'test';
 const config = require('../config/config')[env];
 const db = {};
 
@@ -17,8 +17,8 @@ db.User = User;
 db.Comment = Comment;
 db.Product = Product;
 db.Wishlist = Wishlist;
-db.Purchaselist=Purchaselist;
-db.PurChaseComment=PurChaseComment;
+db.Purchaselist = Purchaselist;
+db.PurChaseComment = PurChaseComment;
 
 User.init(sequelize);
 Comment.init(sequelize);

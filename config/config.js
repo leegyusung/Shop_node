@@ -16,12 +16,10 @@ module.exports = {
         dialect: "mysql"
     },
     production: {
-        username: "be8aab0bdba387",
-        password: "015e2c77",
-        database: "Shop",
+        username: "b9f9227b271696",
+        password: "46188ad1",
+        database: "heroku_f2f800283f14820",
         host: "us-cdbr-east-03.cleardb.com",
-        dialect: "mysql",
-        //logging:false,
+        dialect: "mysql"
     }
-   // mysql://be8aab0bdba387:015e2c77@us-cdbr-east-03.cleardb.com/heroku_5954aec46fd3766?reconnect=true
 }

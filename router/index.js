@@ -16,13 +16,17 @@ router.use((req, res, next) => {
 router.get('/', async (req, res, next) => {
     try {
         const result = await Product.findAll({})
-
-        var proPost = "proPost";
-        result.sort(function (a, b) {
-            return b[proPost] - a[proPost];
-        })
-        const result1 = result.slice(0, 3);
-        res.render('main', { result: result1 });
+        if (result.length != 0) {
+            var proPost = "proPost";
+            result.sort(function (a, b) {
+                return b[proPost] - a[proPost];
+            })
+            const result1 = result.slice(0, 3);
+            res.render('main', { result: result1 });
+        }
+        if (result.length == 0) {
+            res.render('main',  result );
+        }
     } catch (error) {
         console.error(error);
         next(error);
