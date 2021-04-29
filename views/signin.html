@@ -29,6 +29,12 @@
                 <input type="name" id="name" required onkeyup="this.setAttribute('value', this.value);" value="">
                 <label>Name</label>
             </div>
+            <div class="inputBox">
+                <select name="authority" id="authority">
+                    <option value="0" id="0">User</option>
+                    <option value="1" id="1">Admin</option>
+                </select>
+            </div>
             <input type="button" id="back-main" value="Back ">
             <input type="button" id="sign-in" value="Sign In" onclick="signIn()">
         </form>
@@ -48,13 +54,14 @@
         const email = $('#email').val();
         const password = $('#password').val();
         const name = $('#name').val();
+        const authority=$('#authority option:selected').val();
         if (email != '' && password != '' && name != '') {
-            const result = await axios.post('/signin', { email, password, name })
+            const result = await axios.post('/signin', { email, password, name ,authority})
                 .then((data) => {
                     alert('회원가입이 완료되었습니다.');
                     location.href = '/'
                 })
-                .catch((data)=>{
+                .catch((data) => {
                     alert('존재하는 이메일입니다.');
                     location.reload();
                 })

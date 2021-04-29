@@ -6,7 +6,7 @@ const Wishlist = require('./wishlist');
 const Purchaselist = require('./purchaselist');
 const PurChaseComment = require('./purChaseComment');
 
-const env = process.env.NODE_ENV || 'production' || 'test';
+const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
 const db = {};
 

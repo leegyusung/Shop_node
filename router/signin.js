@@ -13,16 +13,17 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
         const user = await User.findOne({
             where: { email: req.body.email }
         })
-     
+
         const result = await User.create({
             email: req.body.email,
             password: req.body.password,
             name: req.body.name,
+            admin: req.body.authority
         })
         return res.redirect('/');
     } catch (error) {
         console.error(error);
-        res.status(333).json({'result':'email fail'});
+        res.status(333).json({ 'result': 'email fail' });
         next(error);
     }
 });
